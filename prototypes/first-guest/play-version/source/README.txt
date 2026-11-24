@@ -2,7 +2,7 @@
 
 Node.js로 수정·빌드할 수 있는 정적 브라우저 게임입니다. 별도 패키지 설치는 필요하지 않습니다.
 
-node build.cjs            게임 파일 생성 → dist/첫손님_게임.html
+node build.cjs            게임 파일 생성 → dist/index.html
 node --test tests/engine.test.cjs    현장 규칙 테스트 11개
 node serve.cjs            개발 미리보기 → http://127.0.0.1:5190
 

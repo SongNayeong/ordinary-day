@@ -1,5 +1,5 @@
 // 게임에 쓰인 글자만 담은 글꼴(woff2)을 Google Fonts에서 받아 outDir에 저장 (인터넷 필요)
-// 사용: node tools/fontsub.js demo/ordinary-day.html demo/fonts   → 그다음 node tools/build-ordinary.js
+// 사용: npm run fonts (node scripts/fontsub.js src/index.html src/fonts)  → 그다음 npm run build
 const fs = require('fs');
 const path = require('path');
 const [, , srcHtml, outDir] = process.argv;

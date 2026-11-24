@@ -2,7 +2,7 @@
 네 계절의 약속 · 이야기와 시범사용 개정판 / 2026-11-21
 
 실행
-첫손님_마을게임.html을 더블 클릭해 Edge 또는 Chrome으로 여세요.
+index.html을 더블 클릭해 Edge 또는 Chrome으로 여세요.
 별도 설치나 인터넷 연결 없이 실행됩니다. WebGL 그래픽 가속이 필요합니다.
 이미 열려 있다면 새로고침하세요. 새 도입부부터 보려면 ‘새로운 일 년 시작’을 선택하세요.
 
@@ -45,13 +45,12 @@
 연말 리포트와 1080×1350 PNG 혁신 도감을 남길 수 있습니다.
 
 소스와 검증
-소스코드에서 npm run build / npm test / npm run dev를 실행합니다. npm 설치는 필요 없습니다.
+source 폴더에서 npm run build / npm test / npm run dev를 실행합니다. npm 설치는 필요 없습니다.
 src/story.js: 이어지는 편지와 약속 / src/pilot.js: 시범사용·기록·결과 규칙
 src/pilot-world.js: 기관 담당자, 출동·차단·횡단·방문 장면 / src/app.js: 화면과 진행
 src/characters.js와 interaction.js: 관절 캐릭터·무대 발표·감정 반응
 src/rules.js: 구매·예산·기업 성장 / src/nav.js: 길 찾기
 src/engine.js는 이전 버전 호환 검증을 위해 남긴 옛 미션 원본이며 새 게임에는 포함하지 않습니다.
-화면과_검증기록/이야기개정판에서 이번 버전의 화면과 실제 브라우저 검증 결과를 확인하세요.
 그 밖의 기존 화면·동영상은 이전 동작 개정판 자료입니다.
 
 출처와 게임화 범위

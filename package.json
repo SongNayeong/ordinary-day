@@ -1,0 +1,15 @@
+{
+  "name": "ordinary-day",
+  "version": "1.0.0",
+  "private": true,
+  "description": "별일 없는 하루 — 2026 조달청 AI 게임·콘텐츠 공모전 AI 게임 부문 출품작",
+  "scripts": {
+    "dev": "node scripts/serve.js src 5178",
+    "build": "node scripts/build.js",
+    "fonts": "node scripts/fontsub.js src/index.html src/fonts",
+    "autodemo": "node scripts/build-autodemo.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

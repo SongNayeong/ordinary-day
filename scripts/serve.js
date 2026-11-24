@@ -1,5 +1,6 @@
 // 데모 미리보기용 아주 작은 정적 파일 서버 (외부 패키지 없음)
-// 사용: node tools/serve.js <폴더> <포트> [저장폴더]
+// 사용: npm run dev (node scripts/serve.js src 5178) → http://localhost:5178
+//       node scripts/serve.js <폴더> <포트> [저장폴더]
 //  - 저장폴더를 주면 POST /save?name=파일.png 로 받은 PNG를 그 폴더에 저장 (이미지 추출 도구용, 127.0.0.1 전용)
 const http = require('http');
 const fs = require('fs');
@@ -12,6 +13,7 @@ const types = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8', '.png': 'image/png', '.jpg': 'image/jpeg',
   '.svg': 'image/svg+xml', '.json': 'application/json', '.pdf': 'application/pdf',
+  '.webp': 'image/webp', '.woff2': 'font/woff2', '.mp4': 'video/mp4',
 };
 
 http.createServer((req, res) => {
