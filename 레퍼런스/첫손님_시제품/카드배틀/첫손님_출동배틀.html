@@ -1,0 +1,1019 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>첫 손님 출동 배틀</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#232042; --paper:#fffaf0; --line:#e2d3b3; --navy:#1f3a6e; --gold:#f2b632; --foe:#d2502e; --new:#2f9b58; --spell:#2f6fd0;
+  --fire:#e8673f; --water:#3b8fe0; --road:#e0a800; --cold:#57b9e6; --gen:#7d8aa8;
+  --title:'Jua','Gowun Dodum',system-ui,sans-serif; --body:'Gowun Dodum','Jua',system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;background:#111a33;color:var(--ink);font-family:var(--body);user-select:none;-webkit-user-select:none}
+button{font-family:var(--title);cursor:pointer;border:none;color:inherit}
+#app{position:fixed;inset:0;display:flex;justify-content:center}
+.screen{width:100%;max-width:920px;height:100%;position:relative;overflow:hidden}
+.bg-spring{background:linear-gradient(180deg,#ffd6e2 0%,#fff1d6 45%,#cfeebd 100%)}
+.bg-summer{background:linear-gradient(180deg,#9fc0ea 0%,#d6ebf7 45%,#b3dccf 100%)}
+.bg-autumn{background:linear-gradient(180deg,#ffcf9c 0%,#ffefd6 45%,#ecc9a5 100%)}
+.bg-winter{background:linear-gradient(180deg,#c8dcf6 0%,#f2f7ff 45%,#d4e1f3 100%)}
+.bg-office{background:radial-gradient(circle at 50% 18%,#33569a 0%,#1a2b52 55%,#0f1730 100%)}
+.f-fire{--fc:var(--fire)}.f-water{--fc:var(--water)}.f-road{--fc:var(--road)}.f-cold{--fc:var(--cold)}.f-gen{--fc:var(--gen)}
+.chip{display:inline-block;background:var(--fc,#888);color:#fff;border-radius:999px;padding:0 7px;font-size:11px;font-family:var(--title);line-height:17px;vertical-align:middle}
+
+/* title */
+.title-wrap{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#fff;text-align:center;padding:16px}
+.badge-top{font-family:var(--title);background:#fff;color:var(--navy);border-radius:999px;padding:4px 14px;font-size:14px}
+.lineup{display:flex;gap:clamp(6px,2vw,18px);align-items:flex-end;margin:6px 0}
+.lineup .sp{font-size:clamp(40px,9vh,70px);position:relative;animation:idle 2.4s ease-in-out infinite;filter:drop-shadow(0 6px 4px rgba(0,0,0,.4))}
+.lineup .sp i{position:absolute;right:-14%;bottom:-6%;font-size:.48em;font-style:normal}
+.lineup .vsx{font-family:var(--title);font-size:28px;color:#ff9b7a;align-self:center}
+.title-wrap h1{font-family:var(--title);font-weight:normal;font-size:clamp(50px,12vw,92px);margin:0;letter-spacing:3px;color:#ffe9a8;text-shadow:0 5px 0 #b8701f,0 10px 26px rgba(0,0,0,.5)}
+.title-wrap .sub{font-size:clamp(15px,3.6vw,20px);opacity:.92}
+.title-wrap .copy{font-family:var(--title);font-size:clamp(18px,4.4vw,26px);color:#bff3d2}
+.big-btn{font-size:21px;padding:13px 36px;border-radius:999px;background:linear-gradient(#ffd25e,#f2a52b);color:#4a2a00!important;box-shadow:0 5px 0 #b86b1f,0 10px 24px rgba(0,0,0,.35);transition:transform .1s}
+.big-btn:hover{transform:translateY(-2px) scale(1.03)}
+.big-btn:active{transform:translateY(3px);box-shadow:0 2px 0 #b86b1f}
+.ghost-btn{background:rgba(255,255,255,.12);color:#fff!important;border:2px solid rgba(255,255,255,.8);border-radius:999px;padding:8px 20px;font-size:15px}
+.small-note{font-size:12px;opacity:.55;max-width:560px}
+
+/* cut */
+.cut{height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding:16px;position:relative;cursor:pointer}
+.cut .speaker{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);font-size:clamp(90px,22vh,170px);filter:drop-shadow(0 10px 14px rgba(0,0,0,.25));animation:popc .35s ease}
+.cut .prop{position:absolute;left:50%;top:13%;transform:translateX(-50%);font-family:var(--title);font-size:17px;background:rgba(255,255,255,.9);padding:6px 16px;border-radius:999px;white-space:nowrap}
+.cut .box{background:var(--paper);border:3px solid var(--ink);border-radius:18px;padding:16px 18px 12px;box-shadow:0 6px 0 var(--ink);position:relative;min-height:108px;animation:rise .25s ease;max-width:820px;margin:0 auto;width:100%}
+.cut .name{position:absolute;top:-18px;left:16px;background:var(--navy);color:#fff;font-family:var(--title);padding:4px 14px;border-radius:999px;font-size:16px}
+.cut .text{font-size:clamp(17px,4.2vw,22px);line-height:1.5;margin-top:6px}
+.cut .nav{display:flex;justify-content:space-between;margin-top:8px;font-size:13px;opacity:.6}
+.skip{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.35);color:#fff!important;padding:6px 12px;border-radius:999px;font-size:14px;z-index:3}
+
+/* battle */
+.battle{display:flex;flex-direction:column;height:100%;padding:4px 8px 6px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:6px;height:30px}
+.pill{font-family:var(--title);background:rgba(255,255,255,.85);padding:3px 11px;border-radius:999px;font-size:14px;white-space:nowrap}
+.badges{display:flex;gap:2px;font-size:16px}
+.badges span{background:linear-gradient(#fff3c4,#ffd76a);border:2px solid #b8860b;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:13px}
+.pols{display:flex;gap:2px}
+.pol-ico{background:#fff;border:2px solid var(--ink);border-radius:8px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer}
+.icon-btn{background:rgba(255,255,255,.85);border-radius:999px;width:34px;height:28px;font-size:15px;flex:none}
+.ticker{height:22px;display:flex;align-items:center;gap:8px;background:var(--navy);color:#fff;border-radius:8px;padding:0 8px;font-size:13px;overflow:hidden;margin-top:3px}
+.ticker b{font-family:var(--title);font-weight:normal;background:#e8473b;padding:0 7px;border-radius:5px;flex:none}
+.ticker span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ticker span.new{animation:tickIn .45s ease}
+.arena{flex:1;display:flex;align-items:stretch;justify-content:space-between;position:relative;border:3px solid var(--ink);border-radius:18px;background:rgba(255,255,255,.32);margin:10px 0 6px;padding:10px 8px 6px;min-height:200px}
+.arena .loc{position:absolute;top:-12px;left:12px;background:var(--navy);color:#fff;font-size:12px;padding:1px 10px;border-radius:7px;font-family:var(--title);white-space:nowrap;max-width:80%;overflow:hidden;text-overflow:ellipsis}
+.arena .scene{position:absolute;left:0;right:0;bottom:8px;display:flex;justify-content:space-around;font-size:clamp(28px,6vw,48px);opacity:.14;pointer-events:none}
+.side{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:4px;position:relative;min-width:0}
+.vs{align-self:center;font-family:var(--title);font-size:clamp(20px,5vw,30px);color:var(--foe);text-shadow:0 2px 0 #fff;padding:0 2px}
+.plate{background:#fff;border:3px solid var(--ink);border-radius:14px;padding:5px 9px 6px;width:100%;max-width:250px;box-shadow:0 4px 0 var(--ink);position:relative}
+.plate .pn{font-family:var(--title);font-size:clamp(14px,3.4vw,18px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plate .pn small{font-size:12px;opacity:.75}
+.plate .pf{font-size:11px;opacity:.8;margin:1px 0 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar{height:14px;border-radius:8px;background:#e9e1d1;border:2px solid var(--ink);position:relative;overflow:hidden;margin-top:2px}
+.bar i{position:absolute;inset:0 auto 0 0;transition:width .5s cubic-bezier(.2,1.2,.4,1);background:#3fbf74}
+.bar.mid i{background:#f2b632}.bar.low i{background:#e0453b}
+.bar b{position:relative;display:block;text-align:center;font-size:11px;line-height:10px;font-family:var(--title);font-weight:normal}
+.bar.xp{height:13px;margin-top:3px}.bar.xp i{background:linear-gradient(90deg,#7fb4ff,#2f6fd0)}.bar.xp b{font-size:10px;line-height:9px;color:#fff;text-shadow:0 1px 1px #000}
+.boss-tag{position:absolute;top:-11px;right:8px;background:var(--foe);color:#fff;font-size:11px;font-family:var(--title);padding:0 8px;border-radius:999px}
+.rage-tag{background:#8a1010;animation:throb .8s infinite}
+.sprite{position:relative;font-size:clamp(62px,14vh,124px);line-height:1;filter:drop-shadow(0 8px 6px rgba(0,0,0,.25));animation:idle 2.4s ease-in-out infinite;margin-top:6px;transition:transform .18s}
+.sprite i{position:absolute;right:-18%;bottom:-4%;font-size:.48em;font-style:normal}
+.sprite.s2{filter:drop-shadow(0 0 10px #ffd76a) drop-shadow(0 8px 6px rgba(0,0,0,.25))}
+.sprite.s3{filter:drop-shadow(0 0 10px #9ee7ff) drop-shadow(0 0 18px #ff9de2) drop-shadow(0 8px 6px rgba(0,0,0,.25))}
+.sprite.boss{font-size:clamp(76px,17vh,150px)}
+.sprite.charging{filter:drop-shadow(0 0 16px #ffe14d) drop-shadow(0 0 30px #ffe14d);animation:throb .5s infinite}
+.sprite.enter{animation:sendout .5s cubic-bezier(.2,1.4,.4,1)}
+.sprite.faint{transition:transform .6s, opacity .6s;transform:translateY(40px) scale(.6)!important;opacity:0}
+.sprite.hit{animation:hitflash .35s}
+.sprite.frozen:after{content:"❄️";position:absolute;left:-14%;top:-10%;font-size:.4em}
+.shadow{width:58%;height:12px;border-radius:50%;background:rgba(0,0,0,.16)}
+.fc{background:#fff;border:2px dashed var(--foe);border-radius:10px;font-size:12px;padding:2px 8px;line-height:1.35;text-align:center;max-width:250px;width:100%}
+.fc b{font-family:var(--title);font-weight:normal;color:var(--foe)}
+.ai{background:#eaf2ff;border:2px solid var(--spell);border-radius:10px;font-size:12px;padding:2px 8px;line-height:1.35;text-align:center;max-width:250px;width:100%}
+.status{font-size:11px;font-family:var(--title);display:flex;gap:4px;justify-content:center;flex-wrap:wrap;min-height:15px}
+.status span{background:#fff;border:1px solid var(--ink);border-radius:999px;padding:0 6px}
+.msgbox{background:var(--navy);color:#fff;border-radius:14px;padding:8px 12px;font-size:clamp(14px,3.6vw,17px);min-height:44px;display:flex;align-items:center;gap:8px;border:3px solid #0c1a38}
+.msgbox .spk{font-size:20px}
+#msg{line-height:1.35}
+.cmd{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+.mv{background:#fff;border:3px solid var(--ink);border-left:10px solid var(--fc,#999);border-radius:14px;padding:5px 8px;text-align:left;box-shadow:0 3px 0 var(--ink);position:relative;min-height:46px;transition:transform .1s}
+.mv:hover:not(:disabled){transform:translateY(-2px)}
+.mv .t{font-family:var(--title);font-size:clamp(14px,3.4vw,17px);display:block}
+.mv .s{font-size:11px;opacity:.75}
+.mv .tag{position:absolute;right:6px;top:4px;font-family:var(--title);font-size:11px;background:var(--gold);color:#4a2a00;border-radius:999px;padding:0 6px}
+.mv.good{background:linear-gradient(#fffbe6,#ffefb0)}
+.mv:disabled{opacity:.42;cursor:default}
+.sub{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+.sub button{background:#fff;border:3px solid var(--ink);border-radius:14px;padding:6px;font-size:15px;box-shadow:0 3px 0 var(--ink)}
+.sub button:disabled{opacity:.42}
+.party{display:flex;gap:5px;justify-content:center;margin-top:6px;flex-wrap:wrap}
+.pm{background:#fff;border:2px solid var(--ink);border-radius:10px;padding:1px 5px 4px;font-size:20px;position:relative;line-height:1.1}
+.pm small{font-size:10px;position:absolute;right:1px;top:-2px}
+.pm i{position:absolute;left:3px;right:3px;bottom:1px;height:3px;border-radius:2px;background:#e9e1d1;overflow:hidden}
+.pm i u{display:block;height:100%;background:#3fbf74}
+.pm.on{box-shadow:0 0 0 3px var(--gold)}
+.pm.down{filter:grayscale(1);opacity:.45}
+
+/* fx */
+#fx{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden}
+.float{position:absolute;transform:translate(-50%,-50%);font-family:var(--title);font-size:34px;-webkit-text-stroke:2px var(--ink);animation:floatup 1s ease forwards;white-space:nowrap}
+.float.dmg{color:#ff4a4a}.float.big{font-size:56px}.float.heal{color:#4be38a}.float.buff{color:#ffd400}.float.info{color:#fff;font-size:22px}
+.banner{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);background:var(--navy);color:#fff;font-family:var(--title);font-size:clamp(18px,4.4vw,30px);padding:10px 26px;border-radius:999px;border:3px solid #fff;animation:bannerpop 1.6s ease forwards;white-space:nowrap;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.banner.gold{background:linear-gradient(90deg,#c48a12,#f2b632);color:#3a2200}
+.banner.grow{background:linear-gradient(90deg,#2f9b58,#3fbf74)}
+.banner.bad{background:linear-gradient(90deg,#b0302a,#e0603d)}
+.bigseal{position:absolute;left:50%;top:44%;width:min(300px,64vw);aspect-ratio:1;border-radius:50%;border:10px double #d62d2d;color:#d62d2d;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--title);font-size:clamp(32px,8vw,52px);background:rgba(255,248,240,.9);animation:bigseal 1.6s ease forwards;transform:translate(-50%,-50%) rotate(-12deg);line-height:1.1;text-align:center}
+.bigseal small{font-size:.36em;margin-top:6px}
+.particle{position:absolute;font-size:24px;animation:fly .8s ease-out forwards}
+.shake-s{animation:shk .25s}.shake-m{animation:shk2 .35s}.shake-l{animation:shk3 .5s}
+#toast{position:fixed;left:50%;top:34%;transform:translateX(-50%);background:rgba(25,22,45,.93);color:#fff;font-family:var(--title);padding:10px 18px;border-radius:14px;z-index:90;font-size:16px;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw;text-align:center}
+#toast.on{opacity:1}
+#tip{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);width:min(540px,92vw);background:#fffbe6;border:3px solid var(--ink);border-radius:16px;padding:8px 12px 8px 56px;font-size:15px;line-height:1.4;z-index:85;box-shadow:0 6px 0 var(--ink);display:none;cursor:pointer}
+#tip.on{display:block;animation:rise .25s ease}
+.inbattle #tip{bottom:auto;top:62px}
+#tip .face{position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:34px}
+#tip b{font-family:var(--title);font-weight:normal;color:#b3261e}
+#overlay{position:fixed;inset:0;background:rgba(15,12,35,.74);z-index:80;display:none;align-items:center;justify-content:center;padding:14px}
+#overlay.on{display:flex}
+.panel{background:var(--paper);border:4px solid var(--ink);border-radius:22px;padding:16px;width:min(540px,100%);max-height:94vh;overflow:auto;text-align:center;box-shadow:0 8px 0 var(--ink);animation:pop .35s ease;position:relative}
+.panel h2{font-family:var(--title);font-weight:normal;font-size:clamp(22px,6vw,30px);margin:2px 0 6px}
+.panel p{font-size:15px;line-height:1.5;margin:6px 0}
+.list{display:flex;flex-direction:column;gap:6px;margin:8px 0;text-align:left}
+.li{display:flex;align-items:center;gap:10px;background:#fff;border:3px solid var(--ink);border-radius:14px;padding:6px 10px;cursor:pointer;box-shadow:0 3px 0 var(--ink)}
+.li:hover{background:#fffbe6}
+.li.dis{opacity:.4;cursor:default}
+.li .ic{font-size:30px;position:relative}
+.li .ic i{position:absolute;right:-8px;bottom:-4px;font-size:.5em;font-style:normal}
+.li .tx{flex:1;font-size:13px;line-height:1.35}
+.li .tx b{font-family:var(--title);font-weight:normal;font-size:16px}
+.li .ct{font-family:var(--title);font-size:18px}
+.doc{background:#fff;border:2px solid #333;border-radius:4px;text-align:left;padding:14px 16px;font-size:15px;line-height:1.6;position:relative;box-shadow:4px 4px 0 rgba(0,0,0,.15)}
+.doc h3{text-align:center;font-family:var(--title);font-weight:normal;font-size:21px;margin:0 0 8px;letter-spacing:5px;border-bottom:2px solid #333;padding-bottom:6px}
+.doc table{width:100%;border-collapse:collapse}
+.doc td{border:1px solid #999;padding:4px 8px;font-size:14px}
+.doc td:first-child{background:#f1f3f7;width:28%;font-family:var(--title)}
+.doc .seal{position:absolute;right:14px;bottom:8px;width:74px;height:74px;border-radius:50%;border:4px double #d62d2d;color:#d62d2d;display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--title);font-size:14px;line-height:1.05;transform:rotate(-14deg);opacity:0;background:rgba(255,255,255,.65)}
+.doc .seal.on{animation:stampin .45s ease forwards}
+.evo{font-size:clamp(90px,24vh,170px);position:relative;display:inline-block;margin:10px 0}
+.evo i{position:absolute;right:-16%;bottom:-4%;font-size:.48em;font-style:normal}
+.evo.flash{animation:evoflash .25s steps(2) infinite}
+.street{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:10px 0}
+.bld{width:96px;background:#fff;border:2px solid var(--ink);border-radius:12px;padding:6px 4px;font-size:12px;position:relative;color:var(--ink)}
+.bld .b1{font-size:30px;line-height:1.1}.bld .b2{font-size:22px}
+.cert{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:8px 0}
+.cert span{background:linear-gradient(#fffbe8,#ffe9a0);border:2px solid #a8740a;border-radius:12px;padding:6px 10px;font-family:var(--title);font-size:13px;color:var(--ink)}
+
+/* choose screens */
+.choose{height:100%;display:flex;flex-direction:column;padding:12px 10px;overflow:auto}
+.choose h2{font-family:var(--title);font-weight:normal;text-align:center;margin:4px 0 2px;font-size:clamp(22px,5.2vw,30px)}
+.choose .lead{text-align:center;font-size:15px;margin-bottom:10px;line-height:1.5}
+.choose.dark{color:#fff}
+.opts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;align-items:stretch}
+.pitch{flex:1 1 220px;max-width:290px;background:rgba(255,255,255,.94);border:3px solid var(--ink);border-radius:18px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--ink)}
+.pitch .sp{font-size:56px;position:relative;line-height:1;animation:idle 2.2s ease-in-out infinite}
+.pitch .sp i{position:absolute;right:-16%;bottom:-4%;font-size:.48em;font-style:normal}
+.pitch .nm{font-family:var(--title);font-size:18px}
+.pitch .bubble{background:#fff;border:2px solid var(--ink);border-radius:14px;padding:6px 10px;font-size:14px;line-height:1.4;min-height:54px}
+.pitch .mvs{width:100%;font-size:12px;background:#f4f6fb;border-radius:10px;padding:5px 8px;line-height:1.5}
+.pitch .score{width:100%;font-size:13px;display:grid;grid-template-columns:auto 1fr;gap:1px 8px;background:#f4f6fb;border-radius:10px;padding:5px 8px}
+.pitch .score b{font-family:var(--title);font-weight:normal}
+.pitch .honest{background:#fff6c9;border:2px dashed #c89400;border-radius:12px;padding:6px 8px;font-size:13px;line-height:1.35;width:100%}
+.pitch .honest.bad{background:#ffe0dc;border-color:#d43c3c;color:#9b1c14}
+.pitch .btns{display:flex;gap:6px;margin-top:auto;width:100%}
+.pitch .btns button{flex:1;padding:9px 6px;border-radius:12px;font-size:15px}
+.btn-eye{background:#fff;border:2px solid var(--ink)!important}
+.btn-pick{background:linear-gradient(#7fe0a5,#2f9b58);color:#fff!important;box-shadow:0 3px 0 #155c33}
+.alt-row{text-align:center;margin:12px 0 4px}
+.alt-btn{background:#eaf2ff;border:2px solid var(--spell)!important;color:var(--spell)!important;border-radius:999px;padding:8px 18px;font-size:15px}
+.polcard{flex:1 1 200px;max-width:250px;background:linear-gradient(#fffbe8,#ffeeb3);border:3px solid #a8740a;border-radius:18px;padding:16px 12px 12px;cursor:pointer;color:var(--ink);text-align:center;transition:transform .15s;position:relative}
+.polcard:hover{transform:translateY(-6px) rotate(-1deg);box-shadow:0 10px 24px rgba(0,0,0,.35)}
+.polcard .pi{font-size:44px}
+.polcard h3{font-family:var(--title);font-weight:normal;margin:4px 0;font-size:19px}
+.polcard .pd{font-size:15px;line-height:1.4;min-height:44px}
+.polcard .pr{font-size:12px;opacity:.75;margin-top:8px;border-top:1px dashed #a8740a;padding-top:6px}
+.polcard .no{position:absolute;top:5px;left:10px;font-size:10px;opacity:.6}
+.stampmark{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-14deg);border:4px double #d62d2d;color:#d62d2d;font-family:var(--title);font-size:22px;padding:4px 12px;border-radius:10px;background:rgba(255,255,255,.85);animation:stamp .7s ease forwards;white-space:nowrap;z-index:5}
+
+/* ending */
+.ending{height:100%;overflow:auto;padding:16px;color:#fff;text-align:center}
+.ending h2{font-family:var(--title);font-weight:normal;font-size:clamp(26px,6.5vw,40px);margin:6px 0;color:#ffe9a8}
+.grade{font-family:var(--title);font-size:clamp(64px,16vw,110px);line-height:1;color:#ffe27a;text-shadow:0 5px 0 #b8701f;animation:pop .6s ease;display:inline-block}
+.ending .type{font-family:var(--title);font-size:clamp(20px,5vw,28px);background:rgba(255,255,255,.12);display:inline-block;padding:8px 18px;border-radius:999px;margin:6px 0}
+.report{background:var(--paper);color:var(--ink);border-radius:16px;border:3px solid var(--ink);padding:12px 16px;margin:10px auto;max-width:560px;text-align:left;font-size:15px;line-height:1.6}
+.report div{padding:3px 0;border-bottom:1px dashed var(--line)}
+.report div:last-child{border:none}
+.report b{color:#b3261e;font-weight:normal;font-family:var(--title)}
+.row-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:14px 0 30px}
+
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+@keyframes popc{0%{transform:translate(-50%,-50%) scale(.6);opacity:0}100%{transform:translate(-50%,-50%) scale(1);opacity:1}}
+@keyframes rise{0%{transform:translateY(20px);opacity:0}100%{transform:none;opacity:1}}
+@keyframes throb{0%,100%{filter:brightness(1)}50%{filter:brightness(1.2)}}
+@keyframes idle{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes sendout{0%{transform:scale(0) rotate(-30deg);opacity:0}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+@keyframes hitflash{0%,100%{opacity:1}25%{opacity:.2;transform:translateX(-8px)}50%{opacity:1;transform:translateX(8px)}75%{opacity:.3}}
+@keyframes evoflash{0%{filter:brightness(1)}100%{filter:brightness(4) saturate(0)}}
+@keyframes floatup{0%{opacity:0;transform:translate(-50%,-30%) scale(.6)}15%{opacity:1;transform:translate(-50%,-50%) scale(1.3)}100%{opacity:0;transform:translate(-50%,-170%) scale(1)}}
+@keyframes bannerpop{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}15%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}25%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-90%)}}
+@keyframes stamp{0%{opacity:0;transform:translate(-50%,-50%) rotate(-14deg) scale(2.6)}40%{opacity:1;transform:translate(-50%,-50%) rotate(-14deg) scale(.95)}55%{transform:translate(-50%,-50%) rotate(-14deg) scale(1.05)}100%{opacity:1;transform:translate(-50%,-50%) rotate(-14deg) scale(1)}}
+@keyframes stampin{0%{opacity:0;transform:rotate(-14deg) scale(2.6)}60%{opacity:1;transform:rotate(-14deg) scale(.92)}100%{opacity:1;transform:rotate(-14deg) scale(1)}}
+@keyframes bigseal{0%{opacity:0;transform:translate(-50%,-50%) rotate(-12deg) scale(3)}25%{opacity:1;transform:translate(-50%,-50%) rotate(-12deg) scale(.94)}35%{transform:translate(-50%,-50%) rotate(-12deg) scale(1.03)}80%{opacity:1}100%{opacity:0}}
+@keyframes tickIn{0%{transform:translateX(40px);opacity:0}100%{transform:none;opacity:1}}
+@keyframes fly{0%{transform:translate(-50%,-50%) scale(.6);opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.2) rotate(var(--rot));opacity:0}}
+@keyframes shk{0%,100%{transform:none}25%{transform:translate(-4px,2px)}50%{transform:translate(4px,-2px)}75%{transform:translate(-3px,1px)}}
+@keyframes shk2{0%,100%{transform:none}20%{transform:translate(-9px,4px)}40%{transform:translate(8px,-5px)}60%{transform:translate(-6px,3px)}80%{transform:translate(5px,-2px)}}
+@keyframes shk3{0%,100%{transform:none}10%{transform:translate(-16px,8px) rotate(-.6deg)}30%{transform:translate(14px,-9px) rotate(.6deg)}50%{transform:translate(-10px,6px)}70%{transform:translate(8px,-4px)}90%{transform:translate(-4px,2px)}}
+@media (max-width:600px){ .pols{display:none} .vs{font-size:18px} .ai{display:none} }
+@media (max-height:640px){ .sprite{font-size:clamp(50px,11vh,90px)} .sprite.boss{font-size:clamp(60px,13vh,110px)} .fc{font-size:11px} }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="fx"></div>
+<div id="toast"></div>
+<div id="tip"><span class="face">🐥</span><span id="tipText"></span></div>
+<div id="overlay"></div>
+<script>
+'use strict';
+/* =====================================================================
+   첫 손님 — 나라가 처음 사주는 날 · 혁신조달 출동 배틀 (시제품 v3)
+   장르: 1:1 턴제 동료 배틀 (규칙 구조만 참고, 이름·그림·화면은 직접 만듦)
+   그림은 임시 이모지. 회사·제품·재난 캐릭터는 모두 가상
+   ===================================================================== */
+const $ = s => document.querySelector(s);
+const app = $('#app');
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+const NARMI = '🧑‍💼', DARI = '🐥';
+const STAGES = [{ icon: '🏠', name: '차고' }, { icon: '🔧', name: '작업실' }, { icon: '🏭', name: '공장' }, { icon: '🌏', name: '세계' }];
+const FIELDS = { fire: { i: '🔥', n: '산림' }, water: { i: '💧', n: '수해' }, road: { i: '🚸', n: '교통' }, cold: { i: '❄️', n: '한파' } };
+const fcls = f => 'f-' + (f || 'gen');
+const fchip = f => f ? `<span class="chip ${fcls(f)}">${FIELDS[f].i} ${FIELDS[f].n}</span>` : `<span class="chip f-gen">🏢 일반</span>`;
+const need = st => [4, 6, 8][st] || 999;
+
+/* ---------- 조달 정책 (끝까지 가는 효과) ---------- */
+const POLICIES = {
+  budget: { i: '💰', n: '시범구매 예산 확대', d: '지금 🧰 하자보수 +2개, 계절마다 +1개 더', real: '2026년 혁신제품 시범구매 예산 839억 원' },
+  priority: { i: '🏷️', n: '혁신제품 우선구매', d: '🌱 동료는 빠른 재난보다도 먼저 움직이고, 배틀 첫 기술 위력 +3', real: '공공기관이 혁신제품을 먼저 사도록 돕는 제도' },
+  immunity: { i: '🛡️', n: '구매 면책', d: '배틀마다 처음 쓰러질 동료는 체력 1로 버텨요', real: '새 기술을 써본 공무원을 결과로 탓하지 않아요' },
+  feedback: { i: '✉️', n: '피드백 강화', d: '지금 ✉️ 편지 +2장, 편지 실적 2배', real: '시범사용 결과를 기업에 돌려줘 제품을 더 좋게' },
+  aitrack: { i: '🤖', n: 'AI 전용트랙', d: '이름에 "AI"가 든 기술 위력 +2', real: '2026년 시범구매에 AI 분야 전용트랙 신설' },
+  techeval: { i: '🔍', n: '기술 중심 평가', d: '혁신장터 🥽 안경 무제한 · 가짜 AI 자동 적발', real: '겉모습보다 기술로 평가해요' },
+  global: { i: '🌏', n: '해외실증 지원', d: '🏭공장 이상 동료 기술 위력 +3', real: '혁신제품이 해외에서도 실증하도록 지원' },
+  joint: { i: '🤝', n: '공동수급', d: '재난을 해결하면 팀 전원이 실적을 똑같이 받아요', real: '여러 기업이 힘을 모아 함께 계약해요' },
+  market: { i: '🖥️', n: '나라장터 연결', d: '동료 교체가 턴을 쓰지 않아요', real: '공공조달 온라인 장터, 나라장터' },
+};
+/* ---------- 달이의 비축가방 ---------- */
+const ITEMS = {
+  repair: { i: '🧰', n: '하자보수', d: '동료 체력 +14', real: '납품한 물건이 고장 나면 고쳐주는 약속(하자보수)' },
+  letter: { i: '✉️', n: '고칠 점 편지', d: '동료 실적 +3, 이번 배틀 위력 +2', real: '써보고 고칠 점을 회사에 알려줘요(피드백)' },
+  pledge: { i: '📜', n: '구매 면책 서약', d: '쓰러진 동료를 체력 절반으로 되살려요', real: '실패해도 탓하지 않아요(구매 면책)' },
+};
+
+/* ---------- 동료 도감 ---------- */
+const DEX = {
+  raccoon: { type: 'new', field: 'fire', who: '너구리 박사', inv: '🦝', prod: 'AI 산불 카메라', hp: 24, names: ['찰칵이', '찰칵이 프로', '찰칵 타워', '찰칵 위성'], props: ['📷', '📹', '🗼', '🛰️'],
+    moves: [{ n: '연기 포착', f: 'fire', p: 4 }, { n: '번쩍 플래시', p: 2, eff: 'weaken' }, { n: 'AI 열화상 스캔', f: 'fire', p: 7, lv: 1, cd: 1 }, { n: 'AI 위성 감시망', f: 'fire', p: 11, lv: 3, cd: 1 }],
+    eye: '실험실에선 잘 됐대요. 써봐야 진짜 실력을 알아요!' },
+  tower: { type: 'old', field: null, who: '튼튼전자', inv: '🏢', prod: '감시탑', hp: 30, names: ['튼튼 감시탑'], props: ['🔭'],
+    moves: [{ n: '망원경 관측', p: 4 }, { n: '튼튼 버티기', eff: 'guard' }, { n: '경보 사이렌', p: 6, cd: 1 }], eye: '많이 써서 믿을 만해요. 대신 자라지는 않아요.' },
+  otter: { type: 'new', field: 'water', who: '수달 엔지니어', inv: '🦦', prod: 'AI 물 감지 센서', hp: 28, names: ['졸졸이', '졸졸이 프로', '졸졸 수문', '졸졸 위성'], props: ['💧', '🚰', '🚧', '🛰️'],
+    moves: [{ n: '수위 감지', f: 'water', p: 4 }, { n: '물길 막기', eff: 'guard' }, { n: 'AI 침수 예측', f: 'water', p: 7, lv: 1, cd: 1 }, { n: '스마트 배수망', f: 'water', p: 11, lv: 3, cd: 1 }],
+    pitch: '지하차도에 물이 차기 전에 미리 알려드려요!', eye: '튼튼하고 꼼꼼해요. 큰 비에선 아직 안 써봤어요.' },
+  badger: { type: 'new', field: 'water', who: '오소리 기계', inv: '🦡', prod: 'AI 배수 로봇', hp: 22, names: ['뚫어봇', '뚫어봇 프로', '뚫어 기지', '뚫어 위성'], props: ['🤖', '🔩', '🏗️', '🛰️'],
+    moves: [{ n: '배수구 뚫기', f: 'water', p: 5 }, { n: '진흙 던지기', p: 2, eff: 'weaken' }, { n: '고압 펌프', f: 'water', p: 8, lv: 1, cd: 1 }, { n: 'AI 로봇 군단', f: 'water', p: 12, lv: 3, cd: 1 }],
+    pitch: '비 오면 배수구로 출동! 막힌 곳을 뻥 뚫어요.', eye: '힘이 세요. 대신 몸이 조금 약해요.' },
+  pump2: { type: 'old', field: null, who: '튼튼전자', inv: '🏢', prod: '대형 펌프차', hp: 34, names: ['튼튼 펌프차'], props: ['🚒'],
+    moves: [{ n: '물대포', p: 5 }, { n: '튼튼 버티기', eff: 'guard' }, { n: '전력 방수', p: 7, cd: 1 }],
+    pitch: '큰 불도 큰 물도, 늘 하던 대로 퍼냅니다.', eye: '많이 써서 믿을 만해요. 대신 자라지는 않아요.' },
+  hamster: { type: 'new', field: 'road', who: '햄찌 공방', inv: '🐹', prod: 'AI 횡단보도', hp: 24, names: ['건널이', '건널이 프로', '건널 교차로', '건널 위성'], props: ['🚦', '🚥', '🚏', '🛰️'],
+    moves: [{ n: '신호 바꾸기', f: 'road', p: 4 }, { n: '바닥 불빛', p: 2, eff: 'weaken' }, { n: 'AI 보행 감지', f: 'road', p: 7, lv: 1, cd: 1 }, { n: '스마트 교차로', f: 'road', p: 11, lv: 3, cd: 1 }],
+    pitch: '아이가 건너려 하면 바닥에 불이 켜지고 차가 멈춰요!', eye: '작고 꼼꼼해요. 큰 길에선 아직 안 써봤어요.' },
+  owl: { type: 'new', field: 'road', who: '부엉이 공방', inv: '🦉', prod: 'AI 밤길 가로등', hp: 26, names: ['반짝이', '반짝이 프로', '반짝 가로수길', '반짝 위성'], props: ['💡', '🔦', '🏮', '🛰️'],
+    moves: [{ n: '불빛 비추기', f: 'road', p: 4 }, { n: '함께 걷기', eff: 'heal' }, { n: 'AI 위험 알림', f: 'road', p: 7, lv: 1, cd: 1 }, { n: '온 동네 불 밝히기', f: 'road', p: 11, lv: 3, cd: 1 }],
+    pitch: '밤길이 무서운 아이들, 제 가로등이 같이 걸어요.', eye: '팀을 돌보는 기술이 있어요. 비 오는 날 시험은 아직이에요.' },
+  fake: { type: 'fake', field: null, who: '무엇이든AI', inv: '🕶️', prod: '만능 AI 예언 거울', hp: 40, names: ['만능 거울'], props: ['🪞'],
+    moves: [{ n: '다 해결 빔', p: 99 }, { n: 'AI 만능 예언', p: 99 }, { n: '초특급 AI', p: 99 }, { n: '뭐든지 다 돼요', p: 99 }],
+    pitch: 'AI가 날씨도, 재난도, 다~ 해결합니다! 기술 위력 99!', eye: '커튼 뒤에서 사람이 손으로 버튼을 누르고 있어요! 가짜 AI예요.' },
+  sheep: { type: 'new', field: 'cold', who: '양 할머니', inv: '🐑', prod: 'AI 안부 스피커', hp: 28, names: ['안부봇', '안부봇 프로', '안부 센터', '안부 위성'], props: ['🔊', '📻', '🏠', '🛰️'],
+    moves: [{ n: '안부 인사', f: 'cold', p: 4 }, { n: '따뜻한 말', eff: 'heal' }, { n: 'AI 이상 감지', f: 'cold', p: 7, lv: 1, cd: 1 }, { n: '온 마을 안부망', f: 'cold', p: 11, lv: 3, cd: 1 }],
+    pitch: '"내가 써보고 만들었지." 혼자 계신 어르신께 매일 안부를 물어요.', eye: '진심이 느껴져요. 팀을 돌보는 기술이 있어요.' },
+  penguin: { type: 'new', field: 'cold', who: '펭귄 스타트업', inv: '🐧', prod: 'AI 빙판 경보', hp: 22, names: ['미끌이', '미끌이 프로', '미끌 관제탑', '미끌 위성'], props: ['⚠️', '🚨', '🗼', '🛰️'],
+    moves: [{ n: '빙판 경보', f: 'cold', p: 5 }, { n: '모래 뿌리기', p: 2, eff: 'weaken' }, { n: 'AI 결빙 예측', f: 'cold', p: 8, lv: 1, cd: 1 }, { n: '전국 빙판 지도', f: 'cold', p: 12, lv: 3, cd: 1 }],
+    pitch: '빙판을 미리 알려드려요! 아직 써본 곳은 없지만요…', eye: '힘이 세요. 대신 몸이 조금 약해요.' },
+  heater: { type: 'old', field: null, who: '튼튼전자', inv: '🏢', prod: '대형 온풍기', hp: 34, names: ['튼튼 온풍기'], props: ['♨️'],
+    moves: [{ n: '따뜻한 바람', p: 5 }, { n: '튼튼 버티기', eff: 'guard' }, { n: '전력 난방', p: 7, cd: 1 }],
+    pitch: '겨울엔 역시 늘 쓰던 온풍기죠.', eye: '많이 써서 믿을 만해요. 대신 자라지는 않아요.' },
+};
+const DRAFTS = [['otter', 'badger', 'pump2'], ['hamster', 'owl', 'fake'], ['sheep', 'penguin', 'heater']];
+
+/* ---------- 재난 ---------- */
+const EN = {
+  ember: { name: '불씨 도깨비', art: '🔥', field: 'fire', hp: 18, pat: [{ n: '불씨 톡', p: 3 }, { n: '연기 뿜기', p: 2 }, { n: '불씨 톡', p: 4 }] },
+  fireboss: { name: '산불 도깨비', art: '👺', field: 'fire', hp: 38, boss: 1, pat: [{ n: '들불', p: 5 }, { n: '마른 바람', eff: 'buff' }, { n: '불씨 비', p: 4 }], rage: { n: '대형 산불', p: 8 } },
+  drop: { name: '빗물방울', art: '💧', field: 'water', hp: 22, pat: [{ n: '빗방울', p: 4 }, { n: '물 튀기기', p: 6 }] },
+  rainboss: { name: '장마 구름', art: '🌧️', field: 'water', hp: 52, boss: 1, pat: [{ n: '폭우', p: 6 }, { n: '천둥 충전', eff: 'charge' }, { n: '천둥', p: 14 }, { n: '침수', p: 5 }], rage: { n: '물폭탄', p: 10 } },
+  scooter: { name: '씽씽 킥보드', art: '🛴', field: 'road', hp: 22, fast: 1, pat: [{ n: '급출발', p: 5 }, { n: '빵빵', p: 4 }] },
+  roadboss: { name: '바쁜 등굣길', art: '🚗', field: 'road', hp: 58, boss: 1, fast: 1, pat: [{ n: '빵빵', p: 5 }, { n: '아침 안개', eff: 'blind' }, { n: '급출발', p: 8 }, { n: '끼어들기', p: 6 }], rage: { n: '큰 버스 돌진', p: 11 } },
+  icicle: { name: '고드름', art: '🥶', field: 'cold', hp: 24, pat: [{ n: '뚝 떨어지기', p: 6 }, { n: '미끄덩', p: 4 }] },
+  coldboss: { name: '한파 할멈', art: '🧙', field: 'cold', hp: 66, boss: 1, pat: [{ n: '칼바람', p: 6 }, { n: '꽁꽁', eff: 'freeze' }, { n: '눈보라', p: 9 }], rage: { n: '북극 한파', p: 12 } },
+};
+const EFF_TXT = { buff: '💨 힘을 모아요 (공격 +2)', charge: '⚡ 기를 모아요… 다음에 큰 공격!', blind: '🌫️ 내 다음 기술 위력 절반', freeze: '❄️ 내 동료를 한 번 얼려요' };
+
+/* ---------- 계절 ---------- */
+const SEASONS = [
+  { key: 'spring', name: '봄', icon: '🌸', field: 'fire', fights: ['ember', 'fireboss'], scene: '🌲⛰️🌲🌳🌲', loc: '○○소방서 관할 산림', org: ['🚒', '○○소방서', '산불 감시 기술', '올봄 산불이 걱정돼요. 감시할 사람이 모자라요!'],
+    say: { start: '후후, 올봄엔 숲을 다 태워주마~', rage: '화났다! 불씨야, 사방으로 튀어라!', lose: '으으… 올봄은 내가 졌다!' } },
+  { key: 'summer', name: '여름', icon: '☀️', field: 'water', fights: ['drop', 'rainboss'], scene: '🏙️🌧️🏢🌧️🏙️', loc: '○○구 지하차도', org: ['🏛️', '○○구청', '지하차도 침수 대비 기술', '장마가 와요. 지하차도가 잠길까 걱정이에요!'],
+    say: { start: '주룩주룩~ 다 잠겨라!', rage: '화났다! 소나기 두 배다!', lose: '흑흑… 비 그쳤다…' } },
+  { key: 'autumn', name: '가을', icon: '🍂', field: 'road', fights: ['scooter', 'roadboss'], scene: '🏫🌳🚦🌳🏫', loc: '○○초등학교 통학로', org: ['🏫', '○○초등학교', '통학로 안전 기술', '개학했어요. 통학로가 너무 위험해요!'],
+    say: { start: '빵빵! 다 비켜, 바쁘다 바빠!', rage: '화났다! 지각이다, 다 비켜!', lose: '알았어요… 학교 앞에선 천천히…' } },
+  { key: 'winter', name: '겨울', icon: '❄️', field: 'cold', fights: ['icicle', 'coldboss'], scene: '🏠❄️🏘️❄️🏠', loc: '○○동 홀몸 어르신 댁', org: ['🏠', '○○주민센터', '홀몸 어르신 안부 기술', '한파예요. 혼자 사는 어르신들이 걱정돼요!'],
+    say: { start: '호오… 다 꽁꽁 얼려주마.', rage: '화났다! 북극 바람이다!', lose: '봄이 오는구나… 내가 졌다.' } },
+];
+
+/* ---------- 상태 ---------- */
+const G = { team: [], bag: {}, policies: [], stage: 0, badges: [], caught: 0, fooled: 0, retries: 0, tips: {}, sound: true, firsts: new Set(), evos: 0, letters: 0, fights: 0 };
+let B = null;
+const hasP = id => G.policies.includes(id);
+const S = () => SEASONS[G.stage];
+const D = m => DEX[m.id];
+const isNew = m => D(m).type === 'new';
+const maxHp = m => D(m).hp + (isNew(m) ? m.stage * 6 : 0);
+const nameOf = m => D(m).names[isNew(m) ? m.stage : 0];
+const propOf = m => D(m).props[isNew(m) ? m.stage : 0];
+const spriteHTML = m => `${D(m).inv}<i>${propOf(m)}</i>`;
+const active = () => G.team[B.active];
+const mkMember = id => { const m = { id, stage: 0, xp: 0 }; m.hp = maxHp(m); return m; };
+
+function newRun() {
+  Object.assign(G, { team: [mkMember('raccoon'), mkMember('tower')], bag: { repair: 2, letter: 1, pledge: 1 }, policies: [], stage: 0, badges: [], caught: 0, fooled: 0, retries: 0, tips: {}, firsts: new Set(), evos: 0, letters: 0, fights: 0 });
+}
+
+/* ---------- 소리 ---------- */
+let AC = null;
+const SFX = {
+  click: [[620, .04]], go: [[440, .06, 'triangle'], [660, .1, 'triangle']], stamp: [[80, .16, 'square'], [60, .1, 'square']],
+  hit: [[150, .09, 'square'], [100, .07, 'square']], big: [[90, .12, 'sawtooth'], [60, .22, 'square']], good: [[660, .06], [880, .06], [1320, .14]],
+  grow: [[523, .08], [659, .08], [784, .08], [1046, .22]], evo: [[392, .1], [523, .1], [659, .1], [784, .1], [1046, .1], [1318, .35]],
+  heal: [[660, .07], [880, .12]], win: [[523, .12], [659, .12], [784, .12], [1046, .4]], lose: [[392, .2], [330, .2], [262, .45]],
+  fake: [[220, .14, 'sawtooth'], [180, .14, 'sawtooth'], [110, .35, 'sawtooth']], eye: [[880, .05], [1320, .09]],
+  freeze: [[1200, .05, 'triangle'], [900, .05, 'triangle'], [1500, .12, 'triangle']], boss: [[110, .14, 'sawtooth'], [90, .14, 'sawtooth']], charge: [[300, .08], [400, .08], [500, .08], [600, .12]],
+  faint: [[400, .1, 'triangle'], [300, .1, 'triangle'], [200, .25, 'triangle']],
+};
+function sfx(n) {
+  if (!G.sound || !SFX[n]) return;
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    let t = AC.currentTime;
+    for (const [f, d, type] of SFX[n]) {
+      const o = AC.createOscillator(), g = AC.createGain();
+      o.type = type || 'sine'; o.frequency.value = f;
+      g.gain.setValueAtTime(.1, t); g.gain.exponentialRampToValueAtTime(.001, t + d);
+      o.connect(g).connect(AC.destination); o.start(t); o.stop(t + d + .03); t += d * .9;
+    }
+  } catch (e) { }
+}
+
+/* ---------- 연출 ---------- */
+let toastT = 0, tipT = 0;
+function toast(msg, ms = 1600) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), ms); }
+function tip(key, html, force) {
+  if (!force && G.tips[key]) return; G.tips[key] = 1;
+  $('#tipText').innerHTML = html; $('#tip').classList.add('on');
+  clearTimeout(tipT); tipT = setTimeout(() => $('#tip').classList.remove('on'), 7500);
+}
+$('#tip').addEventListener('click', () => $('#tip').classList.remove('on'));
+function center(el) { const r = el.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }
+function floatAt(el, text, cls = 'dmg') {
+  if (!el) return; const [x, y] = center(el);
+  const d = document.createElement('div'); d.className = 'float ' + cls; d.textContent = text;
+  d.style.left = x + 'px'; d.style.top = y + 'px'; $('#fx').appendChild(d); setTimeout(() => d.remove(), 1000);
+}
+function burst(el, chars, n = 8) {
+  if (!el) return; const [x, y] = center(el);
+  for (let i = 0; i < n; i++) {
+    const p = document.createElement('div'); p.className = 'particle'; p.textContent = pick(chars);
+    const ang = Math.random() * Math.PI * 2, dist = 50 + Math.random() * 80;
+    p.style.left = x + 'px'; p.style.top = y + 'px';
+    p.style.setProperty('--dx', Math.cos(ang) * dist + 'px'); p.style.setProperty('--dy', Math.sin(ang) * dist + 'px'); p.style.setProperty('--rot', rnd(-180, 180) + 'deg');
+    $('#fx').appendChild(p); setTimeout(() => p.remove(), 820);
+  }
+}
+function banner(text, cls = '') { const d = document.createElement('div'); d.className = 'banner ' + cls; d.textContent = text; $('#fx').appendChild(d); setTimeout(() => d.remove(), 1600); }
+function bigSeal(text, small) { const d = document.createElement('div'); d.className = 'bigseal'; d.innerHTML = `${text}${small ? `<small>${small}</small>` : ''}`; $('#fx').appendChild(d); setTimeout(() => d.remove(), 1600); }
+function screenShake(power) {
+  const cls = power >= 9 ? 'shake-l' : power >= 5 ? 'shake-m' : 'shake-s';
+  app.classList.remove('shake-s', 'shake-m', 'shake-l'); void app.offsetWidth; app.classList.add(cls);
+}
+function news(text) { if (!B) return; B.news = text; const el = $('#tk'); if (el) { el.textContent = text; el.classList.remove('new'); void el.offsetWidth; el.classList.add('new'); } }
+async function msg(text, wait = 750) { if (B) B.msg = text; const el = $('#msg'); if (el) el.innerHTML = text; await sleep(wait); }
+async function lunge(fromSel, toSel) {
+  const a = $(fromSel), t = $(toSel); if (!a || !t) return;
+  const [ax, ay] = center(a), [tx, ty] = center(t);
+  a.style.transition = 'transform .15s ease-in'; a.style.transform = `translate(${(tx - ax) * .55}px,${(ty - ay) * .55}px) scale(1.15)`;
+  await sleep(160); a.style.transition = 'transform .2s ease-out'; a.style.transform = '';
+  t.classList.remove('hit'); void t.offsetWidth; t.classList.add('hit');
+}
+
+/* ---------- 배틀 계산 ---------- */
+function movePower(m, mv) {
+  let p = mv.p || 0;
+  if (isNew(m)) p += m.stage;
+  if (hasP('aitrack') && mv.n.includes('AI')) p += 2;
+  if (hasP('global') && isNew(m) && m.stage >= 2) p += 3;
+  if (hasP('priority') && isNew(m) && !B.firstHit) p += 3;
+  p += B.lbuf[m.id] || 0;
+  return p;
+}
+const matchOf = mv => mv.f && mv.f === EN[B.enemy.id].field;
+function peekMove() { const e = B.enemy, d = EN[e.id]; if (e.enraged && d.rage && e.turns % 2 === 1) return d.rage; return d.pat[e.idx % d.pat.length]; }
+function takeMove() { const mv = peekMove(); if (mv !== EN[B.enemy.id].rage) B.enemy.idx++; B.enemy.turns++; return mv; }
+const cdKey = (m, i) => m.id + ':' + i;
+function moveState(m, i) {
+  const mv = D(m).moves[i];
+  if (mv.lv && m.stage < mv.lv) return { ok: false, why: `🔒 ${STAGES[mv.lv].icon} ${STAGES[mv.lv].name}부터` };
+  if (B.cd[cdKey(m, i)] > 0) return { ok: false, why: '😮‍💨 숨 고르는 중' };
+  return { ok: true };
+}
+
+/* ---------- 배틀 화면 ---------- */
+function hpBar(cur, max) { const r = Math.max(0, cur) / max; return `<div class="bar ${r <= .2 ? 'low' : r <= .5 ? 'mid' : ''}"><i style="width:${r * 100}%"></i><b>체력 ${Math.max(0, cur)}/${max}</b></div>`; }
+function renderBattle() {
+  if (!B) return;
+  const s = S(), m = active(), e = B.enemy, ed = EN[e.id];
+  const busy = B.busy || B.over;
+  let movesHTML = '';
+  if (m) {
+    movesHTML = D(m).moves.map((mv, i) => {
+      const st = moveState(m, i); const good = matchOf(mv);
+      const desc = mv.eff === 'guard' ? '이번 턴 피해 크게 줄이기' : mv.eff === 'heal' ? '체력 회복' : mv.eff === 'weaken' ? `위력 ${movePower(m, mv)} · 재난 다음 공격 -3` : D(m).type === 'fake' ? '위력 99!!' : `위력 ${movePower(m, mv)}`;
+      return `<button class="mv ${fcls(mv.f)} ${good && st.ok ? 'good' : ''}" data-act="move" data-i="${i}" ${busy || !st.ok ? 'disabled' : ''}>
+        <span class="t">${mv.f ? FIELDS[mv.f].i + ' ' : ''}${mv.n}</span><span class="s">${st.ok ? desc : st.why}</span>${good && st.ok ? '<span class="tag">딱 맞음 ×2</span>' : ''}</button>`;
+    }).join('');
+    for (let i = D(m).moves.length; i < 4; i++) movesHTML += `<button class="mv" disabled><span class="t">—</span><span class="s">기술 없음</span></button>`;
+  }
+  const np = !B.over ? peekMove() : null;
+  const npTxt = np ? (np.eff ? `${np.n} · ${EFF_TXT[np.eff]}` : `${np.n} (위력 ${np.p + e.buff}${B.weaken ? ` -${B.weaken}` : ''})`) : '';
+  const bestF = ed.field; const haveMatch = G.team.some(t => t.hp > 0 && t.id !== 'fake' && D(t).field === bestF);
+  const ok = G.team.filter(t => t.hp > 0).length;
+  const loc = `📍 현장: ${s.loc} · ${s.org[0]} ${s.org[1]} 요청`;
+  app.innerHTML = `<div class="screen battle bg-${s.key}">
+    <div class="topbar"><span class="pill">${s.icon} ${s.name} · 출동 ${B.fight + 1}/2</span>
+      <div class="badges">${G.badges.map(b => `<span title="${b.org} 감사장">${b.i}</span>`).join('')}</div>
+      <div class="pols">${G.policies.map(p => `<div class="pol-ico" data-act="pol" data-id="${p}">${POLICIES[p].i}</div>`).join('')}</div>
+      <button class="icon-btn" data-act="sound">${G.sound ? '🔊' : '🔇'}</button></div>
+    <div class="ticker"><b>나라장터 속보</b><span id="tk">${B.news}</span></div>
+    <div class="arena"><div class="loc">${loc}</div><div class="scene">${s.scene}</div>
+      <div class="side me">
+        ${m ? `<div class="plate"><div class="pn">${nameOf(m)} <small>${isNew(m) ? STAGES[m.stage].icon + ' ' + STAGES[m.stage].name : D(m).type === 'old' ? '🏢 우수조달' : '✨'}</small></div>
+          <div class="pf">${fchip(D(m).field)} ${D(m).who}</div>
+          ${hpBar(m.hp, maxHp(m))}
+          ${isNew(m) && m.stage < 3 ? `<div class="bar xp"><i style="width:${Math.min(1, m.xp / need(m.stage)) * 100}%"></i><b>납품 실적 ${m.xp}/${need(m.stage)}</b></div>` : ''}</div>
+        <div class="status">${B.guard ? '<span>🛡️ 버티는 중</span>' : ''}${B.blind ? '<span>🌫️ 안개</span>' : ''}${B.lbuf[m.id] ? `<span>✉️ 위력 +${B.lbuf[m.id]}</span>` : ''}</div>
+        <div class="sprite ${isNew(m) && m.stage >= 3 ? 's3' : isNew(m) && m.stage >= 2 ? 's2' : ''} ${B.frozen ? 'frozen' : ''} ${B.enterMe ? 'enter' : ''}" id="meSp">${spriteHTML(m)}</div><div class="shadow"></div>` : '<div class="plate">동료를 골라요</div>'}
+      </div>
+      <div class="vs">VS</div>
+      <div class="side foe">
+        <div class="plate">${ed.boss ? `<span class="boss-tag ${e.enraged ? 'rage-tag' : ''}">${e.enraged ? '😡 화남' : '재난 대장'}</span>` : ''}<div class="pn">${ed.name}</div>
+          <div class="pf">${fchip(ed.field)} ${ed.fast ? '· ⚡ 빠름' : ''}</div>${hpBar(e.hp, e.max)}</div>
+        ${np ? `<div class="fc">📡 <b>재난 예보</b> · 다음 행동<br>${npTxt}</div>` : ''}
+        <div class="sprite ${ed.boss ? 'boss' : ''} ${e.charging ? 'charging' : ''} ${B.enterFoe ? 'enter' : ''}" id="foeSp">${ed.art}</div><div class="shadow"></div>
+        <div class="ai">🐥 달이 AI 분석: ${FIELDS[bestF].i} ${FIELDS[bestF].n} 기술이 딱 맞아요${haveMatch ? '' : ' (팀에 없어요!)'}</div>
+      </div>
+    </div>
+    <div class="msgbox"><span class="spk">📢</span><span id="msg">${B.msg || ''}</span></div>
+    <div class="cmd">${movesHTML}</div>
+    <div class="sub"><button data-act="bag" ${busy ? 'disabled' : ''}>🎒 달이의 비축가방 (${Object.values(G.bag).reduce((a, b) => a + b, 0)})</button>
+      <button data-act="switch" ${busy || ok < 2 ? 'disabled' : ''}>🔄 동료 교체 ${hasP('market') ? '(무료)' : ''}</button></div>
+    <div class="party">${G.team.map((t, i) => `<div class="pm ${i === B.active ? 'on' : ''} ${t.hp <= 0 ? 'down' : ''}" title="${nameOf(t)}">${D(t).inv}<small>${isNew(t) ? STAGES[t.stage].icon : ''}</small><i><u style="width:${Math.max(0, t.hp) / maxHp(t) * 100}%"></u></i></div>`).join('')}</div>
+  </div>`;
+  document.body.classList.add('inbattle');
+  B.enterMe = false; B.enterFoe = false;
+}
+
+/* ---------- 배틀 시작 ---------- */
+function startFight(fight, showReq) {
+  const s = S(), id = s.fights[fight], ed = EN[id];
+  B = { fight, enemy: { id, hp: ed.hp, max: ed.hp, buff: 0, idx: 0, turns: 0, enraged: false, charging: false },
+    active: G.team.findIndex(t => t.id === 'fake' && t.hp > 0) >= 0 ? G.team.findIndex(t => t.id === 'fake') : G.team.findIndex(t => t.hp > 0), guard: false, weaken: 0, blind: false, frozen: false, cd: {}, lbuf: {}, firstHit: false, immunityUsed: false,
+    busy: true, over: false, enterMe: true, enterFoe: true, news: (!showReq && B && B.news) ? B.news : `[나라장터] ${s.org[1]}, '${s.org[2]}' 구매 요청 접수`, msg: '' };
+  G.fights++;
+  B.msg = `${ed.art} ${ed.name}이(가) 나타났다!`;
+  renderBattle(); sfx(ed.boss ? 'boss' : 'go');
+  if (showReq) {
+    overlay(`<div class="panel" style="background:#f4f1ea"><div class="doc">
+      <h3>구 매 요 청 서</h3>
+      <table><tr><td>요청 기관</td><td>${s.org[0]} ${s.org[1]}</td></tr>
+      <tr><td>요청 내용</td><td>${s.org[2]}</td></tr>
+      <tr><td>현장</td><td>${FIELDS[s.field].i} ${FIELDS[s.field].n} · ${s.loc}</td></tr>
+      <tr><td>사연</td><td>"${s.org[3]}"</td></tr>
+      <tr><td>맞는 기술</td><td>${FIELDS[s.field].i} ${FIELDS[s.field].n} 기술 → 위력 2배</td></tr></table>
+      <div style="margin-top:8px;font-size:13px;opacity:.75">수신: 조달청 혁신조달팀장 · ${s.icon} ${s.name}</div>
+      <div class="seal" id="reqSeal">조달청<br>접수</div></div>
+      <button class="big-btn" data-act="reqOk" style="margin-top:12px">접수하고 출동! 🚨</button></div>`);
+  } else beginFight();
+}
+async function reqOk() {
+  const seal = $('#reqSeal'); if (!seal || seal.classList.contains('on')) return;
+  seal.classList.add('on'); sfx('stamp'); await sleep(600); closeOverlay(); beginFight();
+}
+async function beginFight() {
+  const m = active();
+  await sleep(400);
+  if (m.id === 'fake') { await msg('🕶️ 무엇이든AI: "저희 만능 거울이 먼저 나가겠습니다! 다~ 해결해 드리죠!"', 1100); tip('fakeout', `<b>달이</b>: 무엇이든AI가 멋대로 먼저 나왔어요… 정말 위력 99일까요?`); }
+  await msg(`${NARMI} 나르미: "${nameOf(m)}, 출동!"`, 600);
+  B.busy = false; B.msg = `${nameOf(m)}, 어떻게 할까요? <small style="opacity:.7">(기술을 골라요)</small>`; renderBattle();
+  if (G.stage === 0 && B.fight === 0) tip('t1', `<b>달이</b>: 팀장님! 아래 <b>기술 버튼</b>을 눌러요. 🔥 표시 기술은 산불에 <b>딱 맞아서 2배</b>예요! 오른쪽 <b>📡 재난 예보</b>에 상대의 다음 행동이 보여요.`);
+  if (G.stage === 1 && B.fight === 0) tip('t-field', `<b>달이</b>: 이번 현장은 💧 <b>수해</b>! 💧 기술이 딱 맞아요. 🔄 <b>동료 교체</b>로 맞는 동료를 내보내요. 필요한 곳에 맞는 기술을 잇는 게 조달청 일이죠!`);
+}
+
+/* ---------- 내 행동 ---------- */
+async function act(action) {
+  if (!B || B.busy || B.over) return;
+  B.busy = true; closeOverlay(); $('#tip').classList.remove('on'); renderBattle();
+  const me = active();
+  if (action.type === 'switch') {
+    await doSwitch(action.idx);
+    if (!hasP('market')) await enemyTurn(); else await msg('🖥️ 나라장터 연결! 교체해도 턴이 그대로예요.', 700);
+    return endTurn();
+  }
+  const enemyFirst = EN[B.enemy.id].fast && !(hasP('priority') && isNew(me));
+  if (enemyFirst) {
+    await msg(`⚡ ${EN[B.enemy.id].name}이(가) 먼저 움직였다!`, 500);
+    const r = await enemyTurn(); if (r === 'lost' || B.over) return;
+    if (r === 'switched') return endTurn();
+  }
+  if (B.frozen) {
+    B.frozen = false; sfx('freeze'); await msg(`❄️ ${nameOf(active())}은(는) 꽁꽁 얼어서 움직일 수 없어요!`, 900); renderBattle();
+  } else {
+    const r = action.type === 'move' ? await useMove(action.i) : await useItem(action.k, action.t);
+    if (r === 'win') return winFight();
+    if (r === 'lost') return;
+  }
+  if (!enemyFirst) { const r = await enemyTurn(); if (r === 'lost' || B.over) return; }
+  endTurn();
+}
+function endTurn() {
+  if (!B || B.over) return;
+  B.guard = false;
+  for (const k in B.cd) if (B.cd[k] > 0) B.cd[k]--;
+  B.busy = false; const m = active();
+  B.msg = `${nameOf(m)}, 어떻게 할까요?`; renderBattle();
+  if (m.hp <= maxHp(m) * .35 && G.bag.repair) tip('lowhp', `<b>달이</b>: 체력이 얼마 안 남았어요! <b>🎒 비축가방</b>의 🧰 하자보수로 고치거나, 🔄 다른 동료로 교체해요.`);
+  if (B.enemy.charging) tip('charge', `<b>달이</b>: ⚡ 큰 공격이 와요! <b>🛡️ 버티기</b> 기술이 있으면 지금이 기회예요. 아니면 체력 많은 동료로 교체!`);
+}
+async function useMove(i) {
+  const m = active(), mv = D(m).moves[i];
+  if (D(m).type === 'fake') return fakeReveal(m, mv);
+  sfx('click');
+  await msg(`${nameOf(m)}의 <b>${mv.f ? FIELDS[mv.f].i + ' ' : ''}${mv.n}</b>!`, 450);
+  if (mv.cd) B.cd[cdKey(m, i)] = 2;
+  if (mv.eff === 'guard') { B.guard = true; sfx('heal'); renderBattle(); floatAt($('#meSp'), '🛡️', 'info'); await msg(`🛡️ ${nameOf(m)}이(가) 단단히 버틸 준비를 했어요!`, 700); return; }
+  if (mv.eff === 'heal') {
+    const amt = 9 + (isNew(m) ? m.stage * 2 : 0); const before = m.hp; m.hp = Math.min(maxHp(m), m.hp + amt); sfx('heal'); renderBattle();
+    floatAt($('#meSp'), `+${m.hp - before}`, 'heal'); burst($('#meSp'), ['💚', '✨'], 6); await msg(`💚 체력이 ${m.hp - before} 회복됐어요!`, 700); return;
+  }
+  const x = matchOf(mv) ? 2 : 1;
+  let dmg = movePower(m, mv) * x;
+  let blindNote = false; if (B.blind) { dmg *= .5; B.blind = false; blindNote = true; }
+  const crit = Math.random() < .1; if (crit) dmg *= 1.5;
+  dmg = Math.max(1, Math.round(dmg));
+  if (!G.firsts.has(m.id) && isNew(m)) { G.firsts.add(m.id); news(`[속보] ${D(m).who} '${D(m).prod}', 공공기관 현장 첫 투입!`); }
+  B.firstHit = true;
+  await lunge('#meSp', '#foeSp');
+  B.enemy.hp = Math.max(0, B.enemy.hp - dmg);
+  sfx(dmg >= 10 ? 'big' : 'hit'); screenShake(dmg);
+  renderBattle();
+  floatAt($('#foeSp'), '-' + dmg, dmg >= 12 ? 'dmg big' : 'dmg'); burst($('#foeSp'), x > 1 ? [FIELDS[mv.f].i, '✨', '💥'] : ['💥'], x > 1 ? 10 : 5);
+  if (blindNote) await msg('🌫️ 안개 때문에 잘 안 보여서 위력이 절반…', 650);
+  if (x > 1) { sfx('good'); banner(`${FIELDS[mv.f].i} 딱 맞는 기술! 효과 2배`, 'gold'); await msg(`✨ 현장에 <b>딱 맞는 기술</b>이에요! 효과가 2배!`, 750); }
+  if (crit) { banner('💥 결정적 한 방!', 'bad'); await msg('💥 결정적 한 방!', 600); }
+  if (mv.eff === 'weaken') { B.weaken = 3; await msg(`${EN[B.enemy.id].name}의 다음 공격이 약해졌어요! (-3)`, 650); }
+  if (B.enemy.hp <= 0) return 'win';
+  await rageCheck();
+}
+async function rageCheck() {
+  const e = B.enemy, d = EN[e.id];
+  if (!d.boss || e.enraged || e.hp > e.max / 2) return;
+  e.enraged = true; e.turns = 1; sfx('boss'); screenShake(9); banner(`😡 ${d.name}이(가) 화났다!`, 'bad');
+  news(`[긴급] ${d.name} 거세져… 현장 긴장`); renderBattle();
+  await msg(`${d.art} "${S().say.rage}"`, 1000);
+  tip('rage', `<b>달이</b>: 재난 대장이 화가 나면 <b>${d.rage.n}(위력 ${d.rage.p})</b>를 번갈아 써요. 📡 예보를 잘 봐요!`);
+}
+async function fakeReveal(m, mv) {
+  await msg(`${nameOf(m)}의 <b>${mv.n}</b>!!! ✨✨✨`, 700);
+  sfx('fake'); banner('바람에 커튼이 펄럭… 사람이 손으로 버튼을!', 'bad'); burst($('#meSp'), ['🤚', '💦', '❗'], 10); screenShake(6);
+  await msg('…알고 보니 커튼 뒤에서 사람이 손으로 버튼을 누르고 있었어요! 위력 0!', 1200);
+  G.fooled++; news(`[사회] 무엇이든AI '만능 거울', 현장에서 '사람 손' 들통… 계약 해지`);
+  const el = $('#meSp'); el && el.classList.add('faint'); await sleep(500);
+  G.team.splice(B.active, 1);
+  await msg('📄 무엇이든AI와의 <b>계약을 해지</b>했어요. 겉만 AI는 걸러내야 해요!', 1100);
+  tip('fooled', `<b>달이</b>: 으앗, 겉만 AI였어요! 혁신장터에서 <b>🥽 안경</b>으로 먼저 확인했으면 걸러냈을 거예요.`, true);
+  B.active = -1;
+  if (!G.team.some(t => t.hp > 0)) { await loseFight(); return 'lost'; }
+  await forceSwitch();
+}
+
+/* ---------- 비축가방 ---------- */
+async function useItem(k, ti) {
+  const it = ITEMS[k], t = G.team[ti];
+  G.bag[k]--; sfx('heal');
+  await msg(`🎒 달이가 비축가방에서 <b>${it.i} ${it.n}</b>을(를) 꺼냈어요!`, 650);
+  if (k === 'repair') { const b = t.hp; t.hp = Math.min(maxHp(t), t.hp + 14); renderBattle(); if (ti === B.active) floatAt($('#meSp'), `+${t.hp - b}`, 'heal'); await msg(`🧰 ${nameOf(t)}의 체력이 ${t.hp - b} 회복됐어요!`); }
+  if (k === 'pledge') { t.hp = Math.ceil(maxHp(t) / 2); renderBattle(); await msg(`📜 실패해도 탓하지 않아요. ${nameOf(t)}이(가) 다시 일어났어요!`, 900); }
+  if (k === 'letter') {
+    const add = hasP('feedback') ? 6 : 3; G.letters++;
+    t.xp += add; B.lbuf[t.id] = (B.lbuf[t.id] || 0) + 2; renderBattle();
+    if (ti === B.active) floatAt($('#meSp'), `실적 +${add}`, 'buff');
+    await msg(`✉️ ${D(t).who}에게 고칠 점을 전했어요. 실적 +${add}, 이번 배틀 위력 +2!`, 900);
+    await evolveIfReady(t);
+  }
+}
+function openBag() {
+  if (!B || B.busy || B.over) return;
+  const rows = Object.keys(ITEMS).map(k => {
+    const it = ITEMS[k], n = G.bag[k] || 0;
+    const usable = n > 0 && (k === 'pledge' ? G.team.some(t => t.hp <= 0) : G.team.some(t => t.hp > 0));
+    return `<div class="li ${usable ? '' : 'dis'}" ${usable ? `data-act="bagPick" data-k="${k}"` : ''}><div class="ic">${it.i}</div><div class="tx"><b>${it.n}</b><br>${it.d}<br><span style="opacity:.6">📌 ${it.real}</span></div><div class="ct">×${n}</div></div>`;
+  }).join('');
+  overlay(`<div class="panel"><h2>🎒 달이의 비축가방</h2><p style="font-size:13px;opacity:.75">조달청은 꼭 필요한 물자를 미리 <b>비축</b>해 둬요. 쓰면 한 턴이 지나가요.</p><div class="list">${rows}</div><button class="ghost-btn" style="color:var(--ink)!important;border-color:var(--ink)" data-act="closeOv">닫기</button></div>`);
+}
+function bagPick(k) {
+  const rows = G.team.map((t, i) => {
+    const ok = k === 'pledge' ? t.hp <= 0 : t.hp > 0 && (k !== 'repair' || t.hp < maxHp(t)) && (k !== 'letter' || (isNew(t) && t.stage < 3));
+    return `<div class="li ${ok ? '' : 'dis'}" ${ok ? `data-act="itemUse" data-k="${k}" data-i="${i}"` : ''}><div class="ic">${spriteHTML(t)}</div><div class="tx"><b>${nameOf(t)}</b> ${isNew(t) ? STAGES[t.stage].icon : ''}<br>체력 ${Math.max(0, t.hp)}/${maxHp(t)}${isNew(t) && t.stage < 3 ? ` · 실적 ${t.xp}/${need(t.stage)}` : ''}</div></div>`;
+  }).join('');
+  overlay(`<div class="panel"><h2>${ITEMS[k].i} ${ITEMS[k].n} — 누구에게?</h2><div class="list">${rows}</div><button class="ghost-btn" style="color:var(--ink)!important;border-color:var(--ink)" data-act="bag">← 뒤로</button></div>`);
+}
+
+/* ---------- 교체 ---------- */
+let forceRes = null;
+function openSwitch(force) {
+  const rows = G.team.map((t, i) => {
+    const ok = t.hp > 0 && i !== B.active;
+    const good = D(t).field && D(t).field === EN[B.enemy.id].field;
+    return `<div class="li ${ok ? '' : 'dis'}" ${ok ? `data-act="${force ? 'forcePick' : 'swPick'}" data-i="${i}"` : ''}><div class="ic">${spriteHTML(t)}</div>
+      <div class="tx"><b>${nameOf(t)}</b> ${isNew(t) ? STAGES[t.stage].icon + ' ' + STAGES[t.stage].name : D(t).type === 'old' ? '🏢' : ''} ${fchip(D(t).field)} ${good ? '<span class="chip" style="background:#b8860b">딱 맞음!</span>' : ''}<br>체력 ${Math.max(0, t.hp)}/${maxHp(t)} ${i === B.active ? '· 지금 출동 중' : t.hp <= 0 ? '· 쓰러짐' : ''}</div></div>`;
+  }).join('');
+  overlay(`<div class="panel"><h2>🔄 ${force ? '다음 동료를 골라요' : '동료 교체'}</h2>${force ? '' : `<p style="font-size:13px;opacity:.75">${hasP('market') ? '🖥️ 나라장터 연결: 교체해도 턴이 그대로예요' : '교체하면 재난이 한 번 움직여요'}</p>`}<div class="list">${rows}</div>${force ? '' : `<button class="ghost-btn" style="color:var(--ink)!important;border-color:var(--ink)" data-act="closeOv">닫기</button>`}</div>`);
+}
+async function doSwitch(i) {
+  const old = B.active >= 0 ? G.team[B.active] : null;
+  if (old && old.hp > 0) { await msg(`${NARMI} "${nameOf(old)} 철수!"`, 450); }
+  B.active = i; B.frozen = false; B.enterMe = true; sfx('go'); renderBattle();
+  await msg(`${NARMI} "${nameOf(G.team[i])}, 출동!"`, 600);
+}
+function forceSwitch() { return new Promise(res => { forceRes = res; openSwitch(true); }); }
+
+/* ---------- 재난 턴 ---------- */
+async function enemyTurn() {
+  if (B.over) return;
+  const e = B.enemy, d = EN[e.id], mv = takeMove();
+  await msg(`${d.art} ${d.name}의 <b>${mv.n}</b>!`, 550);
+  if (mv.eff === 'buff') { e.buff += 2; sfx('boss'); renderBattle(); floatAt($('#foeSp'), '공격 +2', 'buff'); await msg(`${d.name}의 공격이 세졌어요! (+2)`, 650); return; }
+  if (mv.eff === 'charge') { e.charging = true; sfx('charge'); renderBattle(); await msg(`⚡ ${d.name}이(가) 기를 모으고 있어요… 다음 턴 큰 공격이 와요!`, 900); return; }
+  if (mv.eff === 'blind') { B.blind = true; renderBattle(); await msg(`🌫️ 안개가 껴서 내 다음 기술 위력이 절반이 돼요!`, 800); return; }
+  if (mv.eff === 'freeze') { B.frozen = true; sfx('freeze'); renderBattle(); burst($('#meSp'), ['❄️'], 8); await msg(`❄️ ${nameOf(active())}이(가) 꽁꽁 얼었어요! 다음 턴엔 못 움직여요.`, 900); return; }
+  e.charging = false;
+  let dmg = mv.p + e.buff - B.weaken; B.weaken = 0;
+  const guarded = B.guard; if (guarded) dmg = Math.round(dmg * .3);
+  dmg = Math.max(0, dmg);
+  await lunge('#foeSp', '#meSp');
+  const me = active(); me.hp -= dmg; sfx(dmg >= 9 ? 'big' : 'hit'); screenShake(dmg); renderBattle();
+  floatAt($('#meSp'), '-' + dmg, dmg >= 9 ? 'dmg big' : 'dmg');
+  if (guarded) await msg('🛡️ 버텨서 피해를 크게 줄였어요!', 600);
+  if (me.hp <= 0) return faintActive();
+}
+async function faintActive() {
+  const m = active();
+  if (hasP('immunity') && !B.immunityUsed) { B.immunityUsed = true; m.hp = 1; renderBattle(); banner('🛡️ 구매 면책! 체력 1로 버텨요', 'gold'); await msg(`🛡️ 구매 면책! ${nameOf(m)}이(가) 겨우 버텼어요.`, 900); return; }
+  m.hp = 0; sfx('faint'); const el = $('#meSp'); el && el.classList.add('faint');
+  await msg(`${nameOf(m)}이(가) 지쳐서 쓰러졌어요…`, 900);
+  if (!G.team.some(t => t.hp > 0)) { await loseFight(); return 'lost'; }
+  tip('faint', `<b>달이</b>: 괜찮아요! 다른 동료를 내보내요. 🎒 비축가방의 📜 <b>구매 면책 서약</b>으로 되살릴 수도 있어요.`);
+  await forceSwitch();
+  return 'switched';
+}
+
+/* ---------- 승패 ---------- */
+async function winFight() {
+  B.over = true; B.busy = true;
+  const e = B.enemy, d = EN[e.id], s = S();
+  const el = $('#foeSp'); el && el.classList.add('faint'); sfx('win'); screenShake(10);
+  burst($('#foeSp'), ['🎉', '✨', '⭐', d.art], 16);
+  await sleep(300); bigSeal('재난 해결', d.boss ? `${s.icon} ${s.name} · 검수 합격` : `${d.name} 해결`);
+  if (d.boss) news(`[속보] 올${s.name} ${d.name} 피해 크게 줄어… "새 기술 덕분"`);
+  await msg(`${d.art} ${d.boss ? s.say.lose : d.name + '이(가) 사라졌어요!'}`, 1500);
+  // 실적
+  const main = d.boss ? 5 : 3, bench = d.boss ? 2 : 1;
+  for (const [i, t] of G.team.entries()) {
+    if (!isNew(t) || t.stage >= 3 || t.hp <= 0 && i !== B.active) continue;
+    const gain = (i === B.active || hasP('joint')) ? main : bench; t.xp += gain;
+  }
+  const m = active();
+  await msg(`📦 납품 실적! ${isNew(m) && m.stage < 3 ? nameOf(m) + ' +' + main : ''} ${hasP('joint') ? '(🤝 공동수급: 모두 똑같이!)' : '· 다른 동료 +' + bench}`, 1000);
+  for (const t of G.team) await evolveIfReady(t);
+  if (B.fight === 0) {
+    await cut([L(DARI, '달이', '팀장님! 재난 대장이 나타났어요!'), L(EN[s.fights[1]].art, EN[s.fights[1]].name, s.say.start)], 'bg-' + s.key);
+    startFight(1, false);
+  } else seasonClear();
+}
+async function seasonClear() {
+  const s = S();
+  G.badges.push({ i: s.org[0], org: s.org[1] });
+  G.team.forEach(t => { if (t.hp > 0 || true) t.hp = maxHp(t); });
+  G.bag.repair += 1 + (hasP('budget') ? 1 : 0); G.bag.letter += 1;
+  overlay(`<div class="panel"><div style="font-size:44px">${s.icon}🎉</div><h2>${s.name}을 지켜냈어요!</h2>
+    <div class="doc" style="margin:8px 0"><h3>납 품 검 수</h3>
+    <table><tr><td>요청 기관</td><td>${s.org[0]} ${s.org[1]}</td></tr><tr><td>납품 내용</td><td>${s.org[2]}</td></tr>
+    <tr><td>검수 결과</td><td>✅ 합격 · "새 기술 덕분에 마을이 안심했어요!"</td></tr>
+    <tr><td>대금 지급</td><td>🧰 하자보수 +${1 + (hasP('budget') ? 1 : 0)} · ✉️ 편지 +1 · 팀 전원 정비 완료</td></tr></table>
+    <div class="seal on" style="right:10px;bottom:6px;width:62px;height:62px;font-size:13px">검수<br>합격</div></div>
+    <div class="cert"><span>🏅 ${s.org[1]} 감사장</span></div>
+    <p style="font-family:var(--title)">🏘️ 내 동료들</p>${streetHTML()}
+    <button class="big-btn" data-act="afterSeason">다음으로 ▶</button></div>`);
+}
+async function loseFight() {
+  B.over = true; B.busy = true; sfx('lose'); G.retries++;
+  await sleep(400);
+  overlay(`<div class="panel"><div style="font-size:44px">😢</div><h2>동료들이 모두 지쳤어요</h2>
+    <p>괜찮아요. <b>실패해도 탓하지 않아요.</b> (구매 면책)<br>자란 동료와 정책은 그대로예요.</p>
+    <p>팀을 정비하고 ✉️ <b>고칠 점 편지</b> 1장을 더 들고 다시 출동해요!</p>
+    <p style="font-size:14px;opacity:.75">💡 팁: 📡 재난 예보에 큰 공격이 보이면 🛡️ 버티기 · 🔄 교체 · 🧰 하자보수를 써요.</p>
+    <button class="big-btn" data-act="retry">다시 출동 🔁</button></div>`);
+}
+function streetHTML() {
+  return `<div class="street">${G.team.map(t => `<div class="bld"><div class="b1">${isNew(t) ? STAGES[t.stage].icon : '🏢'}</div><div class="b2">${spriteHTML(t).replace('<i>', ' ').replace('</i>', '')}</div>${nameOf(t)}<br><b>${isNew(t) ? STAGES[t.stage].name : '우수조달'}</b></div>`).join('')}</div>`;
+}
+
+/* ---------- 진화(성장) ---------- */
+async function evolveIfReady(t) {
+  while (isNew(t) && t.stage < 3 && t.xp >= need(t.stage)) {
+    t.xp -= need(t.stage);
+    const oldName = nameOf(t), oldSp = spriteHTML(t);
+    t.stage++; G.evos++; t.hp = Math.min(maxHp(t), t.hp + 6);
+    const learned = D(t).moves.find(mv => mv.lv === t.stage);
+    const mark = ['', '작업실 확장', '우수조달 인증', '해외 조달시장 진출'][t.stage];
+    await new Promise(res => {
+      G._evoRes = res;
+      overlay(`<div class="panel" style="background:#1a2b52;color:#fff;border-color:#fff"><h2 id="evoT">어? ${oldName}의 모습이…!</h2>
+        <div class="evo flash" id="evoSp">${oldSp}</div><div id="evoB" style="min-height:90px"></div></div>`);
+      sfx('charge');
+      setTimeout(() => {
+        const sp = $('#evoSp'); if (!sp) return res();
+        sp.classList.remove('flash'); sp.innerHTML = spriteHTML(t); sfx('evo');
+        burst(sp, ['✨', '⭐', '🌱', STAGES[t.stage].icon], 18);
+        $('#evoT').textContent = `${oldName} → ${nameOf(t)}!`;
+        $('#evoB').innerHTML = `<div style="font-family:var(--title);font-size:20px;margin:4px 0">${STAGES[t.stage].icon} ${STAGES[t.stage].name} 단계로 성장! <span class="chip" style="background:#d62d2d">${mark}</span></div>
+          <div style="font-size:14px;opacity:.85">체력 +6 · 기술 위력 +1${learned ? ` · 새 기술 <b>${learned.f ? FIELDS[learned.f].i : ''} ${learned.n}</b>을(를) 배웠어요!` : ''}</div>
+          <button class="big-btn" data-act="evoOk" style="margin-top:12px">좋아요! 🎉</button>`;
+        screenShake(6);
+      }, 1500);
+    });
+    closeOverlay();
+    news(t.stage === 3 ? `[국제] ${D(t).who}, 해외 조달시장 진출! 🌏` : t.stage === 2 ? `[경제] ${D(t).who} 공장 착공… 우수조달 인증까지` : `[지역] ${D(t).who} 차고에 불 켜졌다… 작업실로 확장`);
+    if (B && !B.over) renderBattle();
+  }
+}
+
+/* ---------- 컷신 ---------- */
+let cutState = null;
+function cut(lines, bg) { return new Promise(res => { cutState = { lines, i: 0, bg, res }; drawCut(); }); }
+function drawCut() {
+  const { lines, i, bg } = cutState; const l = lines[i];
+  document.body.classList.remove('inbattle');
+  app.innerHTML = `<div class="screen ${bg || 'bg-office'}"><div class="cut" data-act="cutNext">
+    <button class="skip" data-act="cutSkip">건너뛰기 ⏭</button>${l.prop ? `<div class="prop">${l.prop}</div>` : ''}
+    <div class="speaker">${l.face}</div>
+    <div class="box"><div class="name">${l.name}</div><div class="text">${l.text}</div><div class="nav"><span>${i + 1} / ${lines.length}</span><span>눌러서 계속 ▶</span></div></div></div></div>`;
+}
+function cutNext() { if (!cutState) return; sfx('click'); cutState.i++; if (cutState.i >= cutState.lines.length) { const r = cutState.res; cutState = null; r(); } else drawCut(); }
+function cutSkip() { if (!cutState) return; const r = cutState.res; cutState = null; r(); }
+const L = (face, name, text, prop) => ({ face, name, text, prop });
+function overlay(html) { const o = $('#overlay'); o.innerHTML = html; o.classList.add('on'); }
+function closeOverlay() { $('#overlay').classList.remove('on'); $('#overlay').innerHTML = ''; }
+
+/* ---------- 흐름 ---------- */
+function titleScreen() {
+  closeOverlay(); B = null; document.body.classList.remove('inbattle');
+  app.innerHTML = `<div class="screen bg-title" style="background:radial-gradient(circle at 50% 28%,#3e5fa8 0%,#1d2c57 55%,#0f1530 100%)"><div class="title-wrap">
+    <div class="badge-top">2026 조달청 AI 게임 공모전 · AI 게임 부문</div>
+    <div class="lineup"><div class="sp">🦝<i>📷</i></div><div class="sp">🦦<i>💧</i></div><div class="sp">🐹<i>🚦</i></div><div class="sp">🐑<i>🔊</i></div><div class="vsx">VS</div><div class="sp">👺</div></div>
+    <h1>첫 손님</h1>
+    <div class="sub">나라가 처음 사주는 날 · 혁신조달 출동 배틀</div>
+    <div class="copy">"처음은, 나라가 믿어줄게요."</div>
+    <button class="big-btn" data-act="start" style="margin-top:8px">출근하기 🏢</button>
+    <button class="ghost-btn" data-act="sound">${G.sound ? '🔊 소리 켜짐' : '🔇 소리 꺼짐'}</button>
+    <div class="small-note">시제품 · 그림은 임시 이모지 · 등장 회사·제품·재난 캐릭터는 모두 가상이에요</div>
+  </div></div>`;
+}
+async function startGame() {
+  newRun();
+  await cut([
+    L(NARMI, '나르미', '오늘부터 조달청 혁신조달팀장! 첫 출근이다.', '🏢 조달청 혁신조달팀'),
+    L(DARI, '달이', '팀장님, 우리 일은 새 기술과 도움이 필요한 곳을 이어주는 거예요. 아, 누가 문을 두드려요!'),
+    L('🦝', '너구리 박사', '저… AI 산불 카메라 "찰칵이"를 만들었는데요. "써본 곳이 없다"고 아무도 안 사줘요.'),
+    L('🦝', '너구리 박사', '봄까지만 해보고… 차고 문 닫으려고요.', '🏠 불 꺼진 차고'),
+    L(NARMI, '나르미', '그럼 나라가 첫 손님이 될게요! 찰칵이, 우리 팀이 되어줄래요?'),
+    L('📷', '찰칵이', '찰칵! 찰칵! (신난 소리)', '🤝 혁신제품 구매 계약 체결 · 찰칵이가 동료가 됐어요'),
+    L('🏢', '튼튼전자', '저희 감시탑도 함께할게요. 오래 써서 믿을 만하답니다.', '🤝 튼튼 감시탑이 동료가 됐어요'),
+    L(DARI, '달이', '동료는 현장에서 활약할수록 실적이 쌓여서 차고 → 작업실 → 공장 → 세계로 자라요. 자, 첫 구매 요청서가 왔어요!'),
+  ], 'bg-office');
+  seasonIntro();
+}
+async function seasonIntro() {
+  const s = S();
+  const lines = [];
+  if (G.stage === 1) lines.push(L(DARI, '달이', '요즘 "뭐든 다 되는 AI"라는 회사가 혁신장터를 기웃거린대요. 너무 좋아 보이면 🥽 안경으로 확인!'));
+  if (G.stage === 3) lines.push(L('🏢', '튼튼전자 대표', '저희도 처음엔 차고였어요. 누가 먼저 사줘서 여기까지 온 거죠. 마지막 겨울, 힘내요!'));
+  lines.push(L(s.org[0], s.org[1], s.org[3], `${s.icon} ${s.name} · ${G.stage + 1}/4`));
+  await cut(lines, 'bg-' + s.key);
+  startFight(0, true);
+}
+async function afterSeason() {
+  closeOverlay();
+  const rac = G.team.find(t => t.id === 'raccoon');
+  if (G.stage === 0 && rac) await cut([rac.stage >= 1 ? L('🦝', '너구리 박사', '찰칵이가 실적을 쌓아서 차고에 불이 켜졌어요! 처음으로… 누가 써줬어요!', '🔧 불 켜진 작업실') : L('🦝', '너구리 박사', '처음으로 누가 써줬어요! 고마워요!')], 'bg-spring');
+  if (G.stage >= 3) return ending();
+  policyScreen();
+}
+let polOpts = null;
+function policyScreen() {
+  document.body.classList.remove('inbattle');
+  polOpts = shuffle(Object.keys(POLICIES).filter(p => !hasP(p))).slice(0, 3);
+  app.innerHTML = `<div class="screen bg-office"><div class="choose dark">
+    <h2>📜 조달 정책 결재</h2>
+    <div class="lead">계절을 잘 지켜서 <b>새 정책</b>을 하나 만들 수 있어요.<br>정책은 <b>끝까지</b> 효과가 있어요!</div>
+    <div class="opts">${polOpts.map((p, i) => { const P = POLICIES[p]; return `<div class="polcard" data-act="polPick" data-id="${p}">
+      <div class="no">조달 정책 제2026-${String(G.stage * 3 + i + 1).padStart(2, '0')}호</div><div class="pi">${P.i}</div><h3>${P.n}</h3><div class="pd">${P.d}</div><div class="pr">📌 진짜 조달청: ${P.real}</div></div>`; }).join('')}</div>
+  </div></div>`;
+  tip('policy', `<b>달이</b>: 정책은 진짜 조달청 제도를 바탕으로 만들었어요. 우리 팀에 맞는 걸 골라요!`);
+}
+async function polPick(id, el) {
+  if (!polOpts) return; polOpts = null;
+  G.policies.push(id);
+  if (id === 'budget') G.bag.repair += 2;
+  if (id === 'feedback') G.bag.letter += 2;
+  sfx('stamp'); const s = document.createElement('div'); s.className = 'stampmark'; s.textContent = '결재 완료'; el.appendChild(s); screenShake(5);
+  await sleep(900); marketScreen();
+}
+
+/* ---------- 혁신장터 (새 동료 심사) ---------- */
+let M = null;
+function marketScreen() {
+  M = { ids: shuffle(DRAFTS[G.stage]), eye: hasP('techeval') ? 99 : 1, seen: {}, done: false };
+  if (hasP('techeval')) M.ids.forEach(id => M.seen[id] = 1);
+  drawMarket();
+  tip('market', `<b>달이</b>: 혁신장터예요! 발명가들이 새 기술을 소개해요. 한 곳과 <b>계약</b>하면 동료가 돼요. <b>🥽 안경은 ${hasP('techeval') ? '무제한' : '한 번'}</b>. 대신 ✉️ <b>피드백</b>으로 기존 동료를 키워도 돼요.`);
+  if (G.stage === 1) tip('market2', `<b>달이</b>: 이번 장터엔 수상한 회사가 섞였대요. 너무 좋아 보이는 걸 안경으로 봐요!`, true);
+}
+function drawMarket() {
+  document.body.classList.remove('inbattle');
+  const ns = SEASONS[G.stage + 1];
+  app.innerHTML = `<div class="screen bg-${ns.key}"><div class="choose">
+    <h2>🏪 혁신장터 · 새 동료 심사</h2>
+    <div class="lead">다음 현장: ${ns.icon} <b>${ns.name}</b> · ${ns.org[0]} ${ns.org[1]} · ${fchip(ns.field)} 기술이 딱 맞아요<br>누구의 <b>첫 손님</b>이 될까요? <span style="opacity:.7">(🥽 남은 횟수 ${M.eye >= 99 ? '무제한' : M.eye} · 동료 ${G.team.length}/5)</span></div>
+    <div class="opts">${M.ids.map(id => {
+      const d = DEX[id], m = { id, stage: 0, xp: 0 }, seen = M.seen[id], match = d.field === ns.field;
+      const sc = id === 'fake' ? [seen ? '☆☆☆ 가짜!' : '★★★★★?', '★★★★★ (뭐든지!)', '★★★★★'] : [d.type === 'old' ? '★★★ 검증됨' : seen ? '★★★★' : '★★★?', match ? `✅ ${FIELDS[d.field].i} 딱 맞음` : d.field ? `${FIELDS[d.field].i} ${FIELDS[d.field].n}` : '🏢 일반', d.type === 'new' ? '🌱 차고 → 세계까지' : '— 자라지 않음'];
+      return `<div class="pitch" data-pid="${id}">
+        <div class="sp">${spriteHTML(m)}</div><div class="nm">${d.names[0]}</div><div style="font-size:12px">${d.who} · ${d.prod} ${fchip(d.field)}</div>
+        <div class="bubble">"${d.pitch}"</div>
+        <div class="mvs">체력 ${d.hp} · 기술: ${d.moves.map(mv => `${mv.lv ? '🔒' : ''}${mv.f ? FIELDS[mv.f].i : ''}${mv.n}`).join(' / ')}</div>
+        <div class="score"><b>기술성</b><span>${sc[0]}</span><b>현장 맞춤</b><span>${sc[1]}</span><b>성장 가능성</b><span>${sc[2]}</span></div>
+        ${seen ? `<div class="honest ${id === 'fake' ? 'bad' : ''}">🥽 ${d.eye}</div>` : ''}
+        <div class="btns"><button class="btn-eye" data-act="mEye" data-id="${id}" ${seen || M.eye <= 0 || M.done ? 'disabled style="opacity:.4"' : ''}>🥽 안경</button>
+          <button class="btn-pick" data-act="mPick" data-id="${id}" ${M.done || G.team.length >= 5 ? 'disabled' : ''}>계약하기</button></div></div>`;
+    }).join('')}</div>
+    <div class="alt-row"><button class="alt-btn" data-act="mFeedback" ${M.done ? 'disabled' : ''}>✉️ 계약 대신 <b>피드백</b> — 기존 동료 1명 바로 한 단계 성장</button></div>
+  </div></div>`;
+}
+function marketEye(id) {
+  if (!M || M.eye <= 0 || M.seen[id] || M.done) return;
+  M.eye--; M.seen[id] = 1; sfx('eye');
+  if (id === 'fake') { sfx('fake'); toast('🥽 커튼 뒤에 사람이…! 가짜 AI예요'); }
+  drawMarket();
+}
+async function marketPick(id) {
+  if (!M || M.done) return; M.done = id;
+  const d = DEX[id], ns = SEASONS[G.stage + 1];
+  if (id !== 'fake' && M.seen.fake) G.caught++;
+  overlay(`<div class="panel" style="background:#f4f1ea"><div class="doc">
+    <h3>${d.type === 'old' ? '물 품 구 매 계 약 서' : '혁신제품 구매 계약서'}</h3>
+    <table><tr><td>계약 상대</td><td>${d.inv} ${d.who}</td></tr><tr><td>제품</td><td>${d.prod} "${d.names[0]}"</td></tr>
+    <tr><td>계약 방법</td><td>${d.type === 'old' ? '우수조달물품 구매' : d.type === 'fake' ? '혁신제품 수의계약 (…정말요?)' : '혁신제품 수의계약<br><span style="font-size:12px;opacity:.7">혁신제품은 경쟁 입찰 없이 바로 계약할 수 있어요</span>'}</td></tr>
+    <tr><td>사용 기관</td><td>${ns.org[0]} ${ns.org[1]}</td></tr></table>
+    <div class="seal" id="ctSeal">계약<br>체결</div></div>
+    <button class="big-btn" data-act="ctOk" style="margin-top:12px">도장 쾅! 🖋️</button></div>`);
+}
+async function contractOk() {
+  const seal = $('#ctSeal'); if (!seal || seal.classList.contains('on')) return;
+  seal.classList.add('on'); sfx('stamp'); screenShake(5); await sleep(700);
+  const id = M.done, d = DEX[id]; G.team.push(mkMember(id)); closeOverlay();
+  const bg = 'bg-' + SEASONS[G.stage + 1].key;
+  if (id === 'fake') await cut([L('🕶️', '무엇이든AI', '감사합니다~ 저희 만능 거울이 다~ 해결해 드릴게요. (히히)', '✨ 기술 위력 99…? 너무 좋아 보이는데')], bg);
+  else if (d.type === 'old') await cut([L('🏢', '튼튼전자', '늘 하던 대로 잘 해드릴게요.', `🤝 ${d.names[0]}이(가) 동료가 됐어요`), L(DARI, '달이', '믿음직하죠. 그런데… 새 기술 회사들은 이번에도 차고에 남았어요.')], bg);
+  else await cut([L(d.inv, d.who, '정말요? 처음으로 누가 써준대요! 꼭 보답할게요!', `🤝 ${d.names[0]}이(가) 동료가 됐어요`), L(d.props[0], d.names[0], '(반짝반짝 신난 소리)')], bg);
+  nextSeason();
+}
+function feedbackScreen() {
+  const rows = G.team.map((t, i) => {
+    const ok = isNew(t) && t.stage < 3;
+    return `<div class="li ${ok ? '' : 'dis'}" ${ok ? `data-act="fbPick" data-i="${i}"` : ''}><div class="ic">${spriteHTML(t)}</div><div class="tx"><b>${nameOf(t)}</b> ${isNew(t) ? STAGES[t.stage].icon + ' → ' + (STAGES[t.stage + 1] ? STAGES[t.stage + 1].icon : '') : '🏢 자라지 않음'}<br>${D(t).who} · ${D(t).prod}</div></div>`;
+  }).join('');
+  overlay(`<div class="panel"><h2>✉️ 피드백 보내기</h2><p style="font-size:14px">써보고 느낀 <b>고칠 점</b>을 회사에 전해줘요. 고른 동료가 <b>바로 한 단계 성장</b>해요!<br><span style="opacity:.7">진짜 조달청도 시범사용 결과를 기업에 피드백해요</span></p><div class="list">${rows}</div><button class="ghost-btn" style="color:var(--ink)!important;border-color:var(--ink)" data-act="closeOv">← 장터로</button></div>`);
+}
+async function fbPick(i) {
+  if (!M || M.done) return; M.done = 'feedback'; closeOverlay();
+  const t = G.team[i]; t.xp = Math.max(t.xp, need(t.stage)); G.letters++;
+  await evolveIfReady(t);
+  nextSeason();
+}
+function nextSeason() { M = null; G.stage++; seasonIntro(); }
+
+/* ---------- 엔딩 ---------- */
+async function ending() {
+  const rac = G.team.find(t => t.id === 'raccoon');
+  const racLine = rac && rac.stage >= 3 ? L('💌', '너구리 박사의 엽서', '"첫 손님, 고마워요! 찰칵 위성은 지금 다른 나라 산도 지키고 있어요." — 🌏 너구리 박사', '🌏 다른 나라에서 온 엽서')
+    : rac && rac.stage >= 1 ? L('🦝', '너구리 박사', `차고가 ${STAGES[rac.stage].name}이 됐어요. 처음 믿어준 덕분에 여기까지 왔어요!`, `${STAGES[rac.stage].icon} ${STAGES[rac.stage].name}`)
+    : L('🦝', '너구리 박사', '아직 작지만… 처음 써준 걸 잊지 않을게요.', '🏠 차고');
+  await cut([L(NARMI, '나르미', '네 계절이 지났다. 마을은… 무사하다!', '🎊 연말 조달 실적 보고'), racLine,
+    L('🐣', '새 발명가', '똑똑… 저… 아무도 안 써본 기술인데요.'), L(NARMI, '나르미', '처음은, 나라가 믿어줄게요.')], 'bg-office');
+  document.body.classList.remove('inbattle');
+  const news_ = G.team.filter(isNew);
+  const stageSum = news_.reduce((a, t) => a + t.stage, 0);
+  const big = news_.filter(t => t.stage >= 2).length;
+  const score = stageSum * 15 + G.caught * 15 - G.fooled * 15 - G.retries * 15 + G.badges.length * 10;
+  const grade = score >= 170 ? 'S' : score >= 125 ? 'A' : score >= 80 ? 'B' : 'C';
+  const type = big >= 2 ? ['🚀', '미래를 연 첫 손님', '새 기술을 믿어줬더니, 동료들이 공장을 세우고 세계로 나갔어요!']
+    : stageSum >= 2 ? ['🌱', '새싹 키우미', '믿어준 동료가 자라기 시작했어요. 조금만 더 믿어주면 세계로 갈 수 있어요!']
+    : ['🛡️', '안전제일 팀장', '마을은 지켰지만 새 기술은 많이 자라지 못했어요. 누군가 처음 써줘야 기술이 자라요.'];
+  G.shareText = `첫 손님 ⚔️ 혁신조달 평가 ${grade}등급 · ${type[0]} ${type[1]}${G.caught ? ' 🕵️' : ''}\n동료: ${G.team.map(t => D(t).inv + (isNew(t) ? STAGES[t.stage].icon : '🏢')).join(' ')}\n감사장: ${G.badges.map(b => b.i).join('')} · 정책: ${G.policies.map(p => POLICIES[p].i).join('')}\n처음은, 나라가 믿어줄게요. #첫손님 #조달청`;
+  const rep = [
+    `🤝 새 기술 <b>${news_.length}곳</b>과 계약해 첫 손님이 되어줬어요 → 진짜 조달청도 <b>혁신제품 시범구매</b>로 첫 구매자가 돼요`,
+    `🌱 성장 <b>${G.evos}번</b> · 공장 이상 <b>${big}곳</b> → 첫 구매가 실적이 되어 다른 기관도 사고, 해외로도 나가요`,
+    `✉️ 피드백 <b>${G.letters}번</b> → 조달청은 써본 결과를 기업에 돌려줘 제품을 키워요`,
+    G.caught ? `🕵️ 가짜 AI 적발 → 조달청은 겉모습이 아니라 <b>기술</b>로 평가해요` : G.fooled ? `😵 가짜 AI에 속았어요 → 계약 전에 근거와 시연을 확인해요` : `🔍 가짜 AI와는 계약하지 않았어요`,
+    `🏅 감사장 <b>${G.badges.length}장</b>: ${G.badges.map(b => b.i + ' ' + b.org).join(', ')}`,
+    `📜 결재한 정책: ${G.policies.map(p => `${POLICIES[p].i} ${POLICIES[p].n}`).join(', ') || '없음'}`,
+    `🔁 다시 출동 ${G.retries}번 → 실패해도 탓하지 않아요 (구매 면책)`,
+  ];
+  app.innerHTML = `<div class="screen bg-office"><div class="ending">
+    <h2>연말 조달 실적 보고서</h2>
+    <div style="opacity:.8">혁신조달 평가 등급</div><div class="grade">${grade}</div><br>
+    <div class="type">${type[0]} ${type[1]}${G.caught ? ' + 🕵️ 가짜 AI 사냥꾼' : ''}</div>
+    <p>${type[2]}</p>
+    <p style="font-family:var(--title);margin-top:12px">🏘️ 내가 키운 동료들</p>${streetHTML()}
+    <div class="cert">${G.badges.map(b => `<span>🏅 ${b.org} 감사장</span>`).join('')}</div>
+    <div class="report">${rep.map(r => `<div>${r}</div>`).join('')}</div>
+    <div class="report">💡 진짜 조달청은 새 기술의 <b>첫 손님</b>이 되어요. 나라 돈으로 먼저 사서 필요한 공공기관이 써보게 해요. (2026년 혁신제품 시범구매 <b>839억 원</b>, AI 분야 전용트랙 신설)</div>
+    <div class="report" style="text-align:center;font-family:var(--title);font-size:20px">처음은, 나라가 믿어줄게요. — 조달청</div>
+    <div class="row-btns"><button class="big-btn" data-act="share">결과 복사 📋</button><button class="ghost-btn" data-act="toTitle">처음부터 🔁</button></div>
+  </div></div>`;
+  sfx('win'); burst($('.grade'), ['🎉', '✨', '⭐'], 20);
+}
+
+/* ---------- 입력 ---------- */
+document.addEventListener('click', async e => {
+  const el = e.target.closest('[data-act]'); if (!el) return;
+  const a = el.dataset.act, n = +el.dataset.i;
+  switch (a) {
+    case 'sound': G.sound = !G.sound; if (B && !B.over) renderBattle(); else if (!B) titleScreen(); return;
+    case 'start': sfx('go'); startGame(); return;
+    case 'cutNext': cutNext(); return;
+    case 'cutSkip': e.stopPropagation(); cutSkip(); return;
+    case 'reqOk': reqOk(); return;
+    case 'retry': closeOverlay(); G.team.forEach(t => t.hp = maxHp(t)); G.bag.letter++; startFight(B.fight, false); return;
+    case 'afterSeason': afterSeason(); return;
+    case 'polPick': polPick(el.dataset.id, el); return;
+    case 'mEye': marketEye(el.dataset.id); return;
+    case 'mPick': marketPick(el.dataset.id); return;
+    case 'ctOk': contractOk(); return;
+    case 'mFeedback': if (M && !M.done) feedbackScreen(); return;
+    case 'fbPick': fbPick(n); return;
+    case 'evoOk': if (G._evoRes) { const r = G._evoRes; G._evoRes = null; r(); } return;
+    case 'closeOv': closeOverlay(); return;
+    case 'toTitle': titleScreen(); return;
+    case 'pol': { const P = POLICIES[el.dataset.id]; toast(`${P.i} ${P.n}: ${P.d}`, 2200); return; }
+    case 'share': try { await navigator.clipboard.writeText(G.shareText); toast('결과를 복사했어요! 붙여넣어 자랑해요 📋'); } catch (err) { prompt('아래 글을 복사하세요', G.shareText); } return;
+    case 'move': act({ type: 'move', i: n }); return;
+    case 'bag': openBag(); return;
+    case 'bagPick': bagPick(el.dataset.k); return;
+    case 'itemUse': act({ type: 'item', k: el.dataset.k, t: n }); return;
+    case 'switch': if (B && !B.busy && !B.over) openSwitch(false); return;
+    case 'swPick': act({ type: 'switch', idx: n }); return;
+    case 'forcePick': if (forceRes) { closeOverlay(); const r = forceRes; forceRes = null; await doSwitch(n); r(); } return;
+  }
+});
+titleScreen();
+</script>
+</body>
+</html>

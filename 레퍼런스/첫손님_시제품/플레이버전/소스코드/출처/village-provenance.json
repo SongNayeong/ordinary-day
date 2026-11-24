@@ -1,0 +1,30 @@
+{
+  "date": "2026-11-20",
+  "mode": "Built-in image_gen",
+  "asset": {
+    "file": "assets/village-stage.webp",
+    "prompt": "Use case: stylized-concept. Asset type: original background for a cozy village videogame's inventor presentation scene. WIDE PANORAMA 1792 by 640, almost 3:1. Frontal slightly elevated view of a SMALL OUTDOOR WOODEN PRESENTATION STAGE in a charming animal village on a sunny spring morning. Warm light oak plank platform, three subtle circular woven straw rugs where three animal inventors will later stand, empty stage, open center. Short rounded wooden stage edge across lower third, one low step in front. Left and right sides framed with chunky rounded sage-green trees and peach blossom bushes, large terracotta flower pots, cream fabric bunting overhead and tiny soft glowing round string lights. Behind stage a simple cream fabric backdrop, a very small teal roof glimpse and soft green park foliage. Rounded soft toy-like forms, lovely handcrafted 2D game illustration with gently shaded soft painterly texture, warm tan and seafoam pastel color palette, friendly natural daylight, minimal thin warm-brown outlines, NOT heavy black outlines. Inviting polished console life-sim game look; good empty spaces for overlay characters and speech bubbles at x 25,50,75 percent. Central backdrop uncluttered. NO animals, no people, no text, no letters, no logo, no UI, no watermark. All signs BLANK. This is stage scenery only."
+  },
+  "inheritedAssets": "assets-provenance.json",
+  "ui": "Village stage with three actors, paper product notes, rounded leaf tokens, cream speech balloon with speaker label, butter yellow decisions and mint selection.",
+  "gameplay": {
+    "ai": "Exactly one error within each block of four analyses; position randomized when starting.",
+    "reappointment": "Both safety >= 75 and growth >= 4. Thresholds are prototype tuning values.",
+    "returningCompany": "Previous season company returns, performance +1 and price -20%.",
+    "scope": "UI prototype. Full seasonal physics/timing/pathfinding remain shared hazard demo."
+  },
+  "sources": [
+    {
+      "title": "2030 혁신제품 5,000개 이상 발굴 목표",
+      "url": "https://www.pps.go.kr/kor/bbs/view.do?bbsSn=2509110007&key=00318"
+    },
+    {
+      "title": "AI 전용 심사 트랙",
+      "url": "https://www.pps.go.kr/kor/bbs/view.do?bbsSn=2602040011&key=00634"
+    },
+    {
+      "title": "2026 혁신제품 시범구매 예산",
+      "url": "https://www.pps.go.kr/kor/bbs/view.do?bbsSn=2512180012&key=00318"
+    }
+  ]
+}

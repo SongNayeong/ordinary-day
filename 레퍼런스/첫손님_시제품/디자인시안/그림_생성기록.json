@@ -1,0 +1,45 @@
+{
+  "mode": "Built-in image_gen",
+  "date": "2026-11-20",
+  "assets": {
+    "town": {
+      "file": "assets/town.webp",
+      "prompt": "Use case: stylized-concept. Create an original high-quality 16:9 2D cozy indie videogame background illustration for a Korean game about being the first customer for animal inventors. Rich illustrated 2D shapes with thick dark chocolate ink outlines, subtle handpainted gouache texture, warm butter cream, mint foliage, teal roofs, peach pink blossom trees and tomato red accents. A charming Korean small-town innovation fair / animal inventor village in spring. Eye-level slightly elevated 3/4 view. Right half: cluster of whimsical little workshops, a small cream townhall with teal roof and blank round sign, fairy lights, tool cart, potted flowers and tiny whimsical camera invention on wooden booth, distant hills and fluffy clouds. Foreground winding pale sandy footpath leads from bottom center towards buildings. LEFT 45 percent relatively empty pale buttery sky and grassy ground, clean space for large game title and buttons layered later. Bottom right quiet sandy area for two official mascots layered later. Border foliage and flowers. Original commercially polished actual game art, irresistibly inviting, tactile, cute but not babyish. No characters in foreground, no UI, no panels, NO TEXT, NO LETTERS, NO numbers, no logos, no watermarks. All signage empty."
+    },
+    "inventors": {
+      "file": "assets/inventors.webp",
+      "prompt": "Use case: stylized-concept. Asset type: six charming animal inventor character sprites in one 3 column by 2 row spritesheet, exactly evenly spaced in equal cells. Transparent background. Full body figures, all same height in their cell, all separated with generous empty margin. Cohesive polished 2D cozy indie videogame cartoon artwork, thick dark chocolate outlines, soft gouache texture, bold simple shapes, cream and pastel colors with teal and tomato red accents. Top row: LEFT a round cute raccoon scientist in teal work overalls with tiny round spectacles holding a small high-tech forest camera, CENTER an adorable hedgehog inventor with rust orange scarf holding a small teal quadcopter drone, RIGHT a gentle large brown bear engineer in khaki work jacket holding a wooden lookout tower model. Bottom row: LEFT a cheerful otter engineer in turquoise raincoat holding a water sensor, CENTER a smug fox businessperson in violet jacket holding a shiny magic mirror with a secret remote in other paw, RIGHT a cute elderly sheep inventor with peach cardigan and glasses holding a small smart speaker. Each character expressive, collectible-card-worthy, welcoming personality, beautiful professional game illustration. Front-facing 3/4 poses. NO text, no labels, no lettering, no numbers, no borders, no panels, no UI, no ground, no logos. All sprites isolated, nothing overlaps cells. Transparent background."
+    },
+    "forest": {
+      "file": "assets/forest.webp",
+      "prompt": "Use case: stylized-concept. Asset type: 16:9 spring forest rescue game map background, no UI. Original polished 2D cozy indie game illustration viewed from high above, slightly isometric. Soft handpainted gouache plus thick dark chocolate outlines. Mint, sage and lime green grass, charming round green trees, pink cherry trees only at edges, pale yellow winding trails looping through field. Small cute cream ranger station with teal roof in upper right; small wooden bridge over turquoise river at far left lower corner; a tiny red fire engine parked beside bottom right trail. Main central 70 percent of image consists of spacious readable grass clearing with a few small round shrubs separated widely, easily visible for interactive smoke tokens to be layered later. Terrain is flat illustrated board game landscape, rounded shapes, toy-like proportions, joyful and rich but very clean. No existing hazard icons, no fires, no smoke, no UI, no characters, NO TEXT or numbers anywhere, no watermarks. Forest framing around edges and corners. Art must fill entire image edge to edge."
+    },
+    "seasonMaps": {
+      "file": "assets/seasonMaps.webp",
+      "prompt": "Use case: stylized-concept. Asset type: game background atlas, EXACTLY THREE separate wide 16:9 landscape panels STACKED VERTICALLY, no spacing or labels. Each panel has same height, total image portrait approximately 9:16. Cohesive professional 2D cozy indie videogame art, thick chocolate ink outlines, simple rounded toy shapes, lightly textured gouache. High overhead slightly isometric view, each main central 70 percent clear and simple for gameplay overlays. TOP PANEL: summer rainy small Korean town, turquoise wet pavement, a wide road entering a short underpass, canal water at side, a red white barrier gate, small fountain at far right, teal roofs, rainclouds, no text. MIDDLE PANEL: autumn safe school street, peach trees, a cream school with teal roof and EMPTY sign near upper right, a big simple pedestrian zebra crossing across road in center, traffic lights and parked tiny cars at edges, warm tan and sage palette. BOTTOM PANEL: winter neighborhood with snowy pastel small houses along winding path, glowing yellow windows, rounded snow covered trees framing corners, deep desaturated blue sky, tiny visiting van at far lower right, central space flat white snowy paths. Each panel is an entire game map edge to edge with NO panels, UI, icons, border, text, letters, numbers or characters. Plenty of flat empty center area, charming storybook animal town atmosphere, readable shapes."
+    },
+    "hamster": {
+      "file": "assets/hamster.webp",
+      "prompt": "Use case: stylized-concept. Asset type: single isolated full body character sprite with transparent background. A very cute original hamster inventor, round golden tan cheeks with creamy white belly and tiny ears, wearing mint green work overalls, short red neckerchief, holding a small toy model of a smart pedestrian crossing with a green traffic signal in both paws. Friendly pleased expression. Thick dark chocolate outlines, gouache texture, professional cozy 2D indie videogame character art. Full body front three-quarter pose, entire character fits in square with generous margin, feet visible. No background, no scenery, NO text or lettering, no logos, no labels. Transparent alpha background."
+    }
+  },
+  "officialCharacters": "Unmodified official artwork supplied at 첫손님_assets/official/. Optimized WebP copies only. Dari displayed at half Narmi's height.",
+  "references": [
+    {
+      "title": "Balatro",
+      "url": "https://www.playbalatro.com/press-kit",
+      "applied": "Tactile card selection, reveal, strong commit feedback"
+    },
+    {
+      "title": "Animal Crossing New Horizons",
+      "url": "https://animalcrossing.nintendo.com/new-horizons/update-3-0/?pubDate=20260114",
+      "applied": "Warm village atmosphere, rounded dialogue, visible seasonal environment"
+    },
+    {
+      "title": "DAVE THE DIVER",
+      "url": "https://store.steampowered.com/app/1868140/DAVE_THE_DIVER/",
+      "applied": "Preparation/action/result loop and humorous feedback"
+    }
+  ],
+  "scope": "14 navigable screen types with 4 seasonal visual themes; 30-second interactive hazard demo, investigation/reveal, fraud detection, stamp confirmation, growth, report, image export. Prototype, not production game. Seasonal action uses shared tap engine; advanced autumn timing and winter pathfinding are not implemented."
+}

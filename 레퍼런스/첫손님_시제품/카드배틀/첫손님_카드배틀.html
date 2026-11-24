@@ -1,0 +1,1330 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>첫 손님 카드 배틀</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#232042; --paper:#fffaf0; --line:#e2d3b3;
+  --new:#2f9b58; --old:#6b7a99; --spell:#2f6fd0; --foe:#d2502e; --gold:#f2b632; --navy:#1f3a6e;
+  --hw:clamp(60px,min(13vw,13.5vh),100px); --bw:clamp(54px,min(12.5vw,12.5vh),90px);
+  --title:'Jua','Gowun Dodum',system-ui,sans-serif; --body:'Gowun Dodum','Jua',system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;background:#15122a;color:var(--ink);font-family:var(--body);user-select:none;-webkit-user-select:none}
+button{font-family:var(--title);cursor:pointer;border:none;color:inherit}
+#app{position:fixed;inset:0;display:flex;justify-content:center}
+.screen{width:100%;max-width:1000px;height:100%;position:relative;overflow:hidden}
+.bg-spring{background:linear-gradient(180deg,#ffd6e2 0%,#fff1d6 42%,#d4efc4 100%)}
+.bg-summer{background:linear-gradient(180deg,#9fc0ea 0%,#d6ebf7 42%,#b8e0d4 100%)}
+.bg-autumn{background:linear-gradient(180deg,#ffcf9c 0%,#ffefd6 42%,#f0cfae 100%)}
+.bg-winter{background:linear-gradient(180deg,#c8dcf6 0%,#f2f7ff 42%,#d9e4f4 100%)}
+.bg-office{background:radial-gradient(circle at 50% 20%,#2f4f8f 0%,#1a2b52 55%,#111a33 100%)}
+.bg-title{background:radial-gradient(circle at 50% 28%,#3e5fa8 0%,#1d2c57 55%,#0f1530 100%)}
+.scenery{position:absolute;left:0;right:0;pointer-events:none;font-size:min(9vw,80px);display:flex;justify-content:space-around;filter:saturate(.6);top:13%;opacity:.12}
+
+/* ===== title ===== */
+.title-wrap{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#fff;text-align:center;padding:16px;position:relative}
+.badge-top{font-family:var(--title);background:#fff;color:var(--navy);border-radius:999px;padding:4px 14px;font-size:14px;box-shadow:0 3px 0 rgba(0,0,0,.3)}
+.title-fan{position:relative;height:clamp(130px,24vh,190px);width:300px;margin-bottom:4px}
+.title-fan .card{position:absolute;left:50%;top:6px;transform-origin:50% 130%;--hw:clamp(80px,12vh,104px);animation:fanIn .6s ease backwards}
+.title-wrap h1{font-family:var(--title);font-size:clamp(50px,12vw,92px);margin:0;letter-spacing:3px;color:#ffe9a8;text-shadow:0 5px 0 #b8701f,0 10px 26px rgba(0,0,0,.5);font-weight:normal}
+.title-wrap .sub{font-size:clamp(15px,3.6vw,20px);opacity:.92}
+.title-wrap .copy{font-family:var(--title);font-size:clamp(18px,4.4vw,26px);color:#bff3d2}
+.big-btn{font-size:22px;padding:14px 40px;border-radius:999px;background:linear-gradient(#ffd25e,#f2a52b);color:#4a2a00!important;box-shadow:0 5px 0 #b86b1f,0 10px 24px rgba(0,0,0,.35);transition:transform .1s}
+.big-btn:hover{transform:translateY(-2px) scale(1.03)}
+.big-btn:active{transform:translateY(3px);box-shadow:0 2px 0 #b86b1f}
+.ghost-btn{background:rgba(255,255,255,.12);color:#fff!important;border:2px solid rgba(255,255,255,.8);border-radius:999px;padding:8px 20px;font-size:15px}
+.small-note{font-size:12px;opacity:.55;margin-top:6px;max-width:560px}
+
+/* ===== cut ===== */
+.cut{height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding:16px;position:relative;cursor:pointer}
+.cut .speaker{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);font-size:clamp(90px,22vh,170px);filter:drop-shadow(0 10px 14px rgba(0,0,0,.25));animation:popc .35s ease}
+.cut .prop{position:absolute;left:50%;top:14%;transform:translateX(-50%);font-family:var(--title);font-size:17px;background:rgba(255,255,255,.88);padding:6px 16px;border-radius:999px;white-space:nowrap;box-shadow:0 3px 0 rgba(0,0,0,.15)}
+.cut .box{background:var(--paper);border:3px solid var(--ink);border-radius:18px;padding:16px 18px 12px;box-shadow:0 6px 0 var(--ink);position:relative;min-height:110px;animation:rise .25s ease;max-width:820px;margin:0 auto;width:100%}
+.cut .name{position:absolute;top:-18px;left:16px;background:var(--navy);color:#fff;font-family:var(--title);padding:4px 14px;border-radius:999px;font-size:16px}
+.cut .text{font-size:clamp(17px,4.2vw,22px);line-height:1.5;margin-top:6px}
+.cut .nav{display:flex;justify-content:space-between;margin-top:8px;font-size:13px;opacity:.6}
+.skip{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.35);color:#fff!important;padding:6px 12px;border-radius:999px;font-size:14px;z-index:3}
+
+/* ===== battle ===== */
+.battle{display:flex;flex-direction:column;height:100%;padding:4px 8px 2px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:6px;height:30px;position:relative;z-index:2}
+.pill{font-family:var(--title);background:rgba(255,255,255,.8);padding:3px 11px;border-radius:999px;font-size:14px;white-space:nowrap}
+.pols{display:flex;gap:3px;overflow:hidden}
+.pol-ico{background:linear-gradient(#fff3c4,#ffd76a);border:2px solid #b8860b;border-radius:8px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer}
+.icon-btn{background:rgba(255,255,255,.8);border-radius:999px;width:34px;height:28px;font-size:15px;flex:none}
+.ticker{height:22px;display:flex;align-items:center;gap:8px;background:var(--navy);color:#fff;border-radius:8px;padding:0 8px;font-size:13px;overflow:hidden;position:relative;z-index:2;margin-top:2px}
+.ticker b{font-family:var(--title);background:#e8473b;padding:0 7px;border-radius:5px;flex:none;font-weight:normal}
+.ticker span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ticker span.new{animation:tickIn .45s ease}
+.bossrow{display:flex;justify-content:center;align-items:center;gap:8px;height:clamp(58px,10vh,78px);position:relative;z-index:2}
+.portrait{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.92);border:3px solid var(--ink);border-radius:16px;padding:3px 10px 3px 6px;position:relative;transition:box-shadow .15s}
+.portrait .p-art{font-size:clamp(32px,6.5vh,50px);line-height:1}
+.portrait .p-name{font-family:var(--title);font-size:14px;white-space:nowrap}
+.portrait .hpbar{width:clamp(100px,22vw,170px);height:17px;border-radius:9px;background:#e9e1d1;overflow:hidden;position:relative;border:2px solid var(--ink);margin-top:2px}
+.portrait .hpbar i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#ff8a5b,#d2502e);transition:width .45s cubic-bezier(.2,1.4,.4,1)}
+.portrait.hero .hpbar i{background:linear-gradient(90deg,#ff9fb0,#ff4d68)}
+.portrait .hpbar b{position:relative;font-size:12px;display:block;text-align:center;line-height:13px;font-family:var(--title);font-weight:normal}
+.portrait.enraged{background:#ffe1d8;border-color:#b3261e;animation:rage 1.2s infinite}
+.portrait.targetable{box-shadow:0 0 0 4px #ff3b3b,0 0 22px #ff3b3b;cursor:crosshair;animation:throb 1s infinite}
+.idcard{position:absolute;top:-9px;left:6px;background:var(--navy);color:#fff;font-size:9px;padding:0 6px;border-radius:5px;font-family:var(--title)}
+.forecast{background:rgba(255,255,255,.92);border:2px dashed var(--foe);border-radius:12px;padding:3px 8px;font-size:12px;line-height:1.3;max-width:210px}
+.forecast b{font-family:var(--title);color:var(--foe);font-weight:normal}
+.board{flex:1;display:flex;justify-content:center;align-items:center;gap:clamp(5px,1.6vw,14px);min-height:calc(var(--bw)*1.3 + 18px);position:relative;z-index:2}
+.board.foe{padding-top:14px}
+.board .empty{font-family:var(--title);opacity:.25;font-size:17px}
+.mid{height:22px;display:flex;align-items:center;justify-content:center;position:relative;z-index:2}
+.mid:before{content:"";position:absolute;left:3%;right:3%;top:50%;border-top:2px dashed rgba(35,32,66,.25)}
+.mid span{position:relative;background:var(--navy);color:#fff;font-family:var(--title);font-size:13px;padding:2px 12px;border-radius:999px}
+.mid span.enemy{background:var(--foe)}
+.mid span.combo{position:absolute;right:6%;background:linear-gradient(#ffe27a,#f2a52b);color:#4a2a00;border:2px solid var(--ink);animation:pop .3s ease}
+.playerbar{display:flex;align-items:center;justify-content:space-between;gap:6px;height:clamp(52px,9vh,64px);position:relative;z-index:3}
+.playerbar .portrait .p-art{font-size:clamp(28px,5.5vh,42px)}
+.dmgwarn{position:absolute;right:-8px;top:-12px;background:var(--foe);color:#fff;font-family:var(--title);font-size:12px;border-radius:999px;padding:1px 7px;border:2px solid #fff;animation:throb 1s infinite}
+.mana{display:flex;flex-direction:column;align-items:center;font-family:var(--title);font-size:12px;background:rgba(255,255,255,.85);border-radius:14px;padding:3px 8px}
+.mana .pips{display:flex;gap:1px;font-size:clamp(12px,2.6vh,17px)}
+.pip.off{filter:grayscale(1) opacity(.3)}
+.pip.lock{opacity:.12;filter:grayscale(1)}
+.eye-btn{background:#fff;border:3px solid var(--ink);border-radius:14px;padding:3px 8px;font-size:14px;line-height:1.1}
+.eye-btn small{display:block;font-size:10px;opacity:.7}
+.eye-btn.used{opacity:.4}
+.eye-btn.active{background:#fff1b8;box-shadow:0 0 0 3px var(--gold)}
+.end-btn{background:linear-gradient(#ffd25e,#f2a52b);color:#4a2a00!important;border-radius:14px;padding:6px 12px;font-size:15px;line-height:1.1;box-shadow:0 4px 0 #b86b1f}
+.end-btn small{display:block;font-size:10px;opacity:.75}
+.end-btn:disabled{background:#ccc;box-shadow:0 4px 0 #999;color:#777!important}
+.end-btn.pulse{animation:throb 1s infinite;box-shadow:0 4px 0 #b86b1f,0 0 0 4px #fff,0 0 18px #ffd25e}
+.hand{display:flex;justify-content:center;align-items:flex-end;gap:clamp(2px,.8vw,8px);height:calc(var(--hw)*1.42 + 24px);padding-bottom:12px;position:relative;z-index:4}
+
+/* ===== card ===== */
+.card{--rx:0deg;--ry:0deg;--ty:0px;--sc:1;width:var(--hw);height:calc(var(--hw)*1.42);border-radius:11px;background:var(--paper);border:3px solid var(--ink);position:relative;flex:none;font-family:var(--title);cursor:pointer;box-shadow:0 4px 8px rgba(0,0,0,.22);transform:perspective(600px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(var(--ty)) scale(var(--sc));transition:transform .14s, box-shadow .14s}
+.card .hd{position:absolute;left:0;right:0;top:0;height:13%;border-radius:8px 8px 0 0;font-size:calc(var(--hw)*0.088);color:#fff;display:flex;align-items:center;justify-content:center;letter-spacing:.5px;white-space:nowrap;overflow:hidden}
+.card .art{position:absolute;left:5%;right:5%;top:15%;height:36%;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:inset 0 0 0 2px rgba(0,0,0,.08)}
+.card .art .a1{font-size:calc(var(--hw)*0.36);line-height:1;filter:drop-shadow(0 3px 2px rgba(0,0,0,.25));animation:bob 3s ease-in-out infinite}
+.card .art .a2{font-size:calc(var(--hw)*0.2);position:absolute;right:6%;bottom:4%}
+.card .nm{position:absolute;left:2px;right:2px;top:53%;text-align:center;font-size:calc(var(--hw)*0.118);line-height:1.08;word-break:keep-all}
+.card .who{position:absolute;left:2px;right:2px;top:69%;text-align:center;font-size:calc(var(--hw)*0.088);opacity:.62;font-family:var(--body);line-height:1.1;padding:0 3px}
+.card .ft{position:absolute;left:0;right:0;bottom:12%;display:flex;justify-content:center;align-items:center;gap:2px;font-size:calc(var(--hw)*0.12);letter-spacing:-1px}
+.card .field{border-radius:6px;padding:0 2px;opacity:.55}
+.card .field.on{opacity:1;background:#fff1a8;box-shadow:0 0 0 2px #f2b632;animation:throb 1.2s infinite}
+.card .cost{position:absolute;left:-9px;top:-9px;width:calc(var(--hw)*0.3);height:calc(var(--hw)*0.3);border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff0a8,#f2a52b 70%,#c47a12);border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:calc(var(--hw)*0.17);z-index:3;color:#4a2a00}
+.card .cost.cheap{background:radial-gradient(circle at 35% 30%,#d4ffe1,#3fae6b 70%,#1e6b3e);color:#fff}
+.card .atk,.card .hp{position:absolute;bottom:-10px;width:calc(var(--hw)*0.31);height:calc(var(--hw)*0.31);display:flex;align-items:center;justify-content:center;font-size:calc(var(--hw)*0.17);color:#fff;text-shadow:0 1px 0 rgba(0,0,0,.5);z-index:3}
+.card .atk{left:-8px;border-radius:50%;border:2px solid var(--ink);background:radial-gradient(circle at 35% 30%,#ffc07a,#e0603d 70%,#a8381c)}
+.card .atk.q{background:radial-gradient(circle at 35% 30%,#e2d2ff,#7b5cd6 70%,#4c3399)}
+.card .atk.up{background:radial-gradient(circle at 35% 30%,#fff4a8,#f2b632 70%,#b8860b);color:#4a2a00;text-shadow:none}
+.card .hp{right:-8px;border:2px solid var(--ink);border-radius:6px 6px 50% 50%;background:linear-gradient(#7fe0a5,#2f9b58)}
+.card .hp.hurt{background:linear-gradient(#ffb0b0,#d43c3c)}
+.card .stg{position:absolute;right:-9px;top:-10px;background:#fff;border:2px solid var(--ink);border-radius:10px;padding:0 4px;font-size:calc(var(--hw)*0.15);z-index:3;line-height:1.25;text-align:center}
+.card .stg i{display:block;font-style:normal;font-size:7px;letter-spacing:0;line-height:8px;padding-bottom:2px;color:var(--new)}
+.card .tag{position:absolute;left:50%;transform:translateX(-50%);bottom:-13px;background:var(--spell);color:#fff;font-size:10px;padding:0 6px;border-radius:999px;white-space:nowrap;z-index:4}
+.t-new{border-color:#155c33}.t-new .hd{background:linear-gradient(90deg,#2f9b58,#3fbf74)}.t-new .art{background:radial-gradient(circle at 50% 40%,#effff4,#9be0b5)}
+.t-old{background:#f3f5f9;border-color:#3b4660}.t-old .hd{background:linear-gradient(90deg,#55627f,#7d8aa8)}.t-old .art{background:radial-gradient(circle at 50% 40%,#fff,#c9d0de)}
+.t-spell{background:#eaf2ff;border-color:#163f80}.t-spell .hd{background:linear-gradient(90deg,#2f6fd0,#4f8ef0)}.t-spell .art{background:radial-gradient(circle at 50% 40%,#fff,#a9c6f5)}
+.t-spell .who{top:68%;opacity:.85}
+.t-enemy{background:#fff3ec;border-color:#7d2410}.t-enemy .hd{background:linear-gradient(90deg,#c43d1b,#e8673f)}.t-enemy .art{background:radial-gradient(circle at 50% 40%,#fff,#ffb196)}
+.t-fake{border-color:#155c33}.t-fake .hd{background:linear-gradient(90deg,#ff5fb8,#ffc23f,#4fd4ff,#ff5fb8);background-size:300% 100%;animation:shimmer 2s linear infinite}
+.t-fake .art{background:linear-gradient(135deg,#fff3a8,#ffcf3f,#ff9de2,#9ee7ff);background-size:300% 300%;animation:shimmer 2.4s linear infinite}
+.card.gold{border-color:#a8740a;box-shadow:0 0 0 2px #ffd76a,0 4px 10px rgba(0,0,0,.25)}
+.card.gold .hd{background:linear-gradient(90deg,#c48a12,#ffd76a,#c48a12);background-size:200% 100%;animation:shimmer 3s linear infinite;color:#4a2a00}
+.card.holo .art{background:linear-gradient(135deg,#ffd6f5,#d6f0ff,#d9ffd6,#fff3c4,#ffd6f5);background-size:400% 400%;animation:shimmer 4s linear infinite}
+.card.holo{box-shadow:0 0 0 2px #fff,0 0 14px #9ee7ff,0 0 26px #ff9de2}
+
+.hand .card:hover{--ty:-12px;--sc:1.06;z-index:6}
+.hand .card.playable{box-shadow:0 0 0 3px #4be38a,0 0 14px rgba(75,227,138,.8),0 4px 10px rgba(0,0,0,.25)}
+.hand .card.sel{--ty:-26px;--sc:1.12;z-index:7;box-shadow:0 0 0 4px var(--gold),0 12px 26px rgba(0,0,0,.4)}
+.hand .card.eye-pick{box-shadow:0 0 0 4px #ffd400;animation:throb 1s infinite}
+.hand .card.drawn{animation:drawIn .45s cubic-bezier(.2,1.4,.4,1)}
+
+.board .card{width:var(--bw);height:calc(var(--bw)*1.3);--hw:var(--bw)}
+.board .card .who{display:none}
+.board .card .nm{top:54%}
+.board .card .ft{bottom:13%}
+.board .card.guard{border-width:4px;border-style:double;border-radius:14px 14px 24px 24px;box-shadow:0 0 0 3px rgba(60,110,210,.55),0 4px 8px rgba(0,0,0,.2)}
+.board .card.ready{box-shadow:0 0 0 3px #4be38a,0 0 18px #4be38a;--ty:-3px}
+.board .card.attacker{--ty:-12px;--sc:1.08;box-shadow:0 0 0 4px var(--gold),0 0 24px var(--gold);z-index:5}
+.board .card.targetable{box-shadow:0 0 0 4px #ff3b3b,0 0 20px #ff3b3b;animation:throb 1s infinite;cursor:crosshair}
+.board .card.friend-target{box-shadow:0 0 0 4px var(--spell),0 0 20px var(--spell);animation:throb 1s infinite}
+.board .card.frozen:before{content:"❄️";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:calc(var(--bw)*.5);background:rgba(170,210,255,.6);border-radius:8px;z-index:5}
+.board .card.sleepy .art:after{content:"💤";position:absolute;left:3px;top:1px;font-size:calc(var(--bw)*0.18)}
+.intent{position:absolute;top:-20px;left:50%;transform:translateX(-50%);background:#fff;border:2px solid var(--foe);color:var(--foe);font-size:12px;border-radius:999px;padding:0 7px;white-space:nowrap;z-index:4;font-family:var(--title)}
+.intent.v{background:var(--foe);color:#fff}
+.card.dying{transition:transform .32s, opacity .32s;transform:scale(.15) rotate(25deg)!important;opacity:0}
+.card.enter{animation:slam .38s cubic-bezier(.2,1.4,.4,1)}
+.card.lunging{transition:transform .16s ease-in!important;z-index:30}
+
+#fx{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden}
+.float{position:absolute;transform:translate(-50%,-50%);font-family:var(--title);font-size:32px;-webkit-text-stroke:2px var(--ink);animation:floatup 1s ease forwards;white-space:nowrap}
+.float.dmg{color:#ff4a4a}.float.big{font-size:52px}.float.heal{color:#4be38a}.float.buff{color:#ffd400}.float.info{color:#fff;font-size:22px}
+.banner{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);background:var(--navy);color:#fff;font-family:var(--title);font-size:clamp(18px,4.4vw,30px);padding:10px 26px;border-radius:999px;border:3px solid #fff;animation:bannerpop 1.7s ease forwards;white-space:nowrap;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.banner.grow{background:linear-gradient(90deg,#2f9b58,#3fbf74)}
+.banner.gold{background:linear-gradient(90deg,#c48a12,#f2b632);color:#3a2200}
+.banner.bad{background:linear-gradient(90deg,#b0302a,#e0603d)}
+.stamp{position:absolute;left:50%;top:50%;width:118%;transform:translate(-50%,-50%) rotate(-14deg);border:4px double #d62d2d;color:#d62d2d;font-family:var(--title);font-size:calc(var(--bw)*0.19);text-align:center;border-radius:10px;background:rgba(255,255,255,.82);z-index:8;animation:stamp .6s ease forwards;pointer-events:none;padding:2px 0;white-space:nowrap}
+.bigseal{position:absolute;left:50%;top:46%;width:min(300px,64vw);aspect-ratio:1;border-radius:50%;border:10px double #d62d2d;color:#d62d2d;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--title);font-size:clamp(32px,8vw,52px);background:rgba(255,248,240,.9);animation:bigseal 1.6s ease forwards;transform:translate(-50%,-50%) rotate(-12deg);line-height:1.1;text-align:center}
+.bigseal small{font-size:.38em;margin-top:6px}
+.particle{position:absolute;font-size:22px;animation:fly .8s ease-out forwards}
+.shake-s{animation:shk .25s}.shake-m{animation:shk2 .35s}.shake-l{animation:shk3 .5s}
+#toast{position:fixed;left:50%;top:36%;transform:translateX(-50%);background:rgba(25,22,45,.93);color:#fff;font-family:var(--title);padding:10px 18px;border-radius:14px;z-index:70;font-size:16px;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw;text-align:center}
+#toast.on{opacity:1}
+#say{position:fixed;left:50%;top:clamp(120px,19vh,150px);transform:translateX(-50%);background:#fff;border:3px solid var(--ink);border-radius:16px;padding:6px 14px;font-family:var(--title);font-size:16px;z-index:55;opacity:0;transition:opacity .2s;pointer-events:none;max-width:86vw;text-align:center}
+#say:before{content:"";position:absolute;top:-12px;left:50%;margin-left:-8px;border:8px solid transparent;border-bottom-color:var(--ink);border-top:0}
+#say.on{opacity:1}
+#tip{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);width:min(540px,92vw);background:#fffbe6;border:3px solid var(--ink);border-radius:16px;padding:8px 12px 8px 56px;font-size:15px;line-height:1.4;z-index:58;box-shadow:0 6px 0 var(--ink);display:none;cursor:pointer}
+#tip.on{display:block}
+.inbattle #tip{bottom:calc(var(--hw)*1.42 + 78px)}
+#tip .face{position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:34px}
+#tip b{font-family:var(--title);font-weight:normal;color:#b3261e}
+#info{position:fixed;right:10px;top:50%;transform:translateY(-50%);width:min(250px,64vw);background:var(--paper);border:3px solid var(--ink);border-radius:14px;padding:10px 12px;z-index:57;font-size:14px;line-height:1.4;box-shadow:0 6px 0 var(--ink);display:none;pointer-events:none}
+#info.on{display:block}
+#info h3{margin:0 0 2px;font-family:var(--title);font-size:17px;font-weight:normal}
+#info .lab{font-size:12px;opacity:.7}
+#info .kwl{margin-top:6px;border-top:1px dashed var(--line);padding-top:6px}
+#info .kwl div{margin:2px 0}
+#info .st{margin-top:6px;font-family:var(--title)}
+#overlay{position:fixed;inset:0;background:rgba(15,12,35,.74);z-index:80;display:none;align-items:center;justify-content:center;padding:16px}
+#overlay.on{display:flex}
+.panel{background:var(--paper);border:4px solid var(--ink);border-radius:22px;padding:18px;width:min(540px,100%);max-height:94vh;overflow:auto;text-align:center;box-shadow:0 8px 0 var(--ink);animation:pop .35s ease;position:relative}
+.panel h2{font-family:var(--title);font-size:clamp(24px,6vw,32px);margin:4px 0 6px;font-weight:normal}
+.panel p{font-size:16px;line-height:1.5;margin:6px 0}
+.doc{background:#fff;border:2px solid #333;border-radius:4px;text-align:left;padding:14px 16px;font-size:15px;line-height:1.6;position:relative;box-shadow:4px 4px 0 rgba(0,0,0,.15)}
+.doc h3{text-align:center;font-family:var(--title);font-size:22px;margin:0 0 8px;letter-spacing:6px;font-weight:normal;border-bottom:2px solid #333;padding-bottom:6px}
+.doc table{width:100%;border-collapse:collapse}
+.doc td{border:1px solid #999;padding:4px 8px;font-size:14px}
+.doc td:first-child{background:#f1f3f7;width:30%;font-family:var(--title)}
+.doc .seal{position:absolute;right:16px;bottom:10px;width:76px;height:76px;border-radius:50%;border:4px double #d62d2d;color:#d62d2d;display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--title);font-size:15px;line-height:1.05;transform:rotate(-14deg);opacity:0;background:rgba(255,255,255,.6)}
+.doc .seal.on{animation:stampin .45s ease forwards}
+.street{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:10px 0}
+.bld{width:94px;background:#fff;border:2px solid var(--ink);border-radius:12px;padding:6px 4px;font-size:12px;position:relative;color:var(--ink)}
+.bld .b1{font-size:32px;line-height:1.1}.bld .b2{font-size:20px}
+.bld.up{box-shadow:0 0 0 3px var(--gold);animation:pop .5s ease}
+.bld .upmark{position:absolute;top:-10px;right:-6px;background:var(--gold);border-radius:999px;font-family:var(--title);font-size:11px;padding:1px 6px;border:2px solid var(--ink)}
+
+.choose{height:100%;display:flex;flex-direction:column;padding:12px 10px;overflow:auto;position:relative}
+.choose h2{font-family:var(--title);text-align:center;margin:4px 0 2px;font-size:clamp(22px,5.2vw,30px);font-weight:normal}
+.choose .lead{text-align:center;font-size:15px;margin-bottom:10px;line-height:1.5}
+.choose.dark{color:#fff}
+.opts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;align-items:stretch}
+.pitch{flex:1 1 220px;max-width:300px;background:rgba(255,255,255,.92);border:3px solid var(--ink);border-radius:18px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:7px;position:relative;color:var(--ink)}
+.pitch .inv{font-size:46px;line-height:1;animation:bob 2s ease-in-out infinite}
+.pitch .bubble{background:#fff;border:2px solid var(--ink);border-radius:14px;padding:7px 10px;font-size:14px;line-height:1.4;min-height:58px}
+.pitch .score{width:100%;font-size:13px;display:grid;grid-template-columns:auto 1fr;gap:1px 8px;text-align:left;background:#f4f6fb;border-radius:10px;padding:5px 8px}
+.pitch .score b{font-family:var(--title);font-weight:normal}
+.pitch .honest{background:#fff6c9;border:2px dashed #c89400;border-radius:12px;padding:6px 8px;font-size:13px;line-height:1.35;width:100%}
+.pitch .honest.bad{background:#ffe0dc;border-color:#d43c3c;color:#9b1c14}
+.pitch .btns{display:flex;gap:6px;margin-top:auto;width:100%}
+.pitch .btns button{flex:1;padding:9px 6px;border-radius:12px;font-size:15px}
+.btn-eye{background:#fff;border:2px solid var(--ink)!important}
+.btn-pick{background:linear-gradient(#7fe0a5,#2f9b58);color:#fff!important;box-shadow:0 3px 0 #155c33}
+.pitch.picked{box-shadow:0 0 0 5px var(--gold)}
+.pitch .card{--hw:clamp(80px,13vh,100px);margin:8px 0}
+.alt-row{text-align:center;margin:12px 0 4px}
+.alt-btn{background:#eaf2ff;border:2px solid var(--spell)!important;color:var(--spell)!important;border-radius:999px;padding:8px 18px;font-size:15px}
+.polcard{flex:1 1 200px;max-width:250px;background:linear-gradient(#fffbe8,#ffeeb3);border:3px solid #a8740a;border-radius:18px;padding:16px 12px 12px;cursor:pointer;color:var(--ink);text-align:center;transition:transform .15s;position:relative}
+.polcard:hover{transform:translateY(-6px) rotate(-1deg);box-shadow:0 10px 24px rgba(0,0,0,.35)}
+.polcard .pi{font-size:46px}
+.polcard h3{font-family:var(--title);margin:4px 0;font-size:19px;font-weight:normal}
+.polcard .pd{font-size:15px;line-height:1.4;min-height:44px}
+.polcard .pr{font-size:12px;opacity:.75;margin-top:8px;border-top:1px dashed #a8740a;padding-top:6px}
+.polcard .no{position:absolute;top:5px;left:10px;font-size:10px;opacity:.6}
+.polcard{--bw:90px}
+.fbgrid{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;padding:14px}
+.fbgrid .card{--hw:clamp(78px,13vh,100px)}
+
+.ending{height:100%;overflow:auto;padding:16px;color:#fff;text-align:center}
+.ending h2{font-family:var(--title);font-size:clamp(26px,6.5vw,40px);margin:6px 0;color:#ffe9a8;font-weight:normal}
+.grade{font-family:var(--title);font-size:clamp(64px,16vw,110px);line-height:1;color:#ffe27a;text-shadow:0 5px 0 #b8701f;animation:pop .6s ease;display:inline-block}
+.ending .type{font-family:var(--title);font-size:clamp(20px,5vw,28px);background:rgba(255,255,255,.12);display:inline-block;padding:8px 18px;border-radius:999px;margin:6px 0}
+.report{background:var(--paper);color:var(--ink);border-radius:16px;border:3px solid var(--ink);padding:12px 16px;margin:10px auto;max-width:560px;text-align:left;font-size:15px;line-height:1.6}
+.report div{padding:3px 0;border-bottom:1px dashed var(--line)}
+.report div:last-child{border:none}
+.report b{color:#b3261e;font-weight:normal;font-family:var(--title)}
+.row-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:14px 0 30px}
+
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+@keyframes popc{0%{transform:translate(-50%,-50%) scale(.6);opacity:0}100%{transform:translate(-50%,-50%) scale(1);opacity:1}}
+@keyframes rise{0%{transform:translateY(20px);opacity:0}100%{transform:none;opacity:1}}
+@keyframes throb{0%,100%{filter:brightness(1)}50%{filter:brightness(1.18)}}
+@keyframes rage{0%,100%{box-shadow:0 0 0 0 rgba(255,60,30,0)}50%{box-shadow:0 0 0 6px rgba(255,60,30,.35),0 0 24px rgba(255,60,30,.6)}}
+@keyframes floatup{0%{opacity:0;transform:translate(-50%,-30%) scale(.6)}15%{opacity:1;transform:translate(-50%,-50%) scale(1.3)}100%{opacity:0;transform:translate(-50%,-170%) scale(1)}}
+@keyframes bannerpop{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}15%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}25%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-90%)}}
+@keyframes stamp{0%{opacity:0;transform:translate(-50%,-50%) rotate(-14deg) scale(2.6)}40%{opacity:1;transform:translate(-50%,-50%) rotate(-14deg) scale(.95)}55%{transform:translate(-50%,-50%) rotate(-14deg) scale(1.05)}85%{opacity:1}100%{opacity:0}}
+@keyframes stampin{0%{opacity:0;transform:rotate(-14deg) scale(2.6)}60%{opacity:1;transform:rotate(-14deg) scale(.92)}100%{opacity:1;transform:rotate(-14deg) scale(1)}}
+@keyframes bigseal{0%{opacity:0;transform:translate(-50%,-50%) rotate(-12deg) scale(3)}25%{opacity:1;transform:translate(-50%,-50%) rotate(-12deg) scale(.94)}35%{transform:translate(-50%,-50%) rotate(-12deg) scale(1.03)}80%{opacity:1}100%{opacity:0}}
+@keyframes slam{0%{transform:translateY(-50px) scale(1.4);opacity:0}60%{transform:translateY(5px) scale(.95);opacity:1}100%{transform:none}}
+@keyframes drawIn{0%{transform:translate(120px,40px) rotate(20deg) scale(.6);opacity:0}100%{transform:none;opacity:1}}
+@keyframes fanIn{0%{opacity:0;transform:translateX(-50%) translateY(60px) rotate(0)}}
+@keyframes shimmer{0%{background-position:0% 50%}100%{background-position:300% 50%}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes tickIn{0%{transform:translateX(40px);opacity:0}100%{transform:none;opacity:1}}
+@keyframes fly{0%{transform:translate(-50%,-50%) scale(.6);opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.2) rotate(var(--rot));opacity:0}}
+@keyframes shk{0%,100%{transform:none}25%{transform:translate(-4px,2px)}50%{transform:translate(4px,-2px)}75%{transform:translate(-3px,1px)}}
+@keyframes shk2{0%,100%{transform:none}20%{transform:translate(-9px,4px)}40%{transform:translate(8px,-5px)}60%{transform:translate(-6px,3px)}80%{transform:translate(5px,-2px)}}
+@keyframes shk3{0%,100%{transform:none}10%{transform:translate(-16px,8px) rotate(-.6deg)}30%{transform:translate(14px,-9px) rotate(.6deg)}50%{transform:translate(-10px,6px)}70%{transform:translate(8px,-4px)}90%{transform:translate(-4px,2px)}}
+.shakeel{animation:shk2 .35s}
+
+@media (max-width:640px){
+  #info{right:50%;transform:translateX(50%);top:auto;bottom:calc(var(--hw)*1.42 + 74px)}
+  .end-btn{padding:6px 8px;font-size:14px}
+  .portrait .p-name{font-size:12px}
+  .forecast{display:none}
+  .pols{display:none}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="fx"></div>
+<div id="toast"></div>
+<div id="say"></div>
+<div id="tip"><span class="face">🐥</span><span id="tipText"></span></div>
+<div id="info"></div>
+<div id="overlay"></div>
+<script>
+'use strict';
+/* =====================================================================
+   첫 손님 — 나라가 처음 사주는 날 · 혁신조달 카드 배틀 (시제품 v2)
+   그림은 임시 이모지. 회사·제품·재난 캐릭터는 모두 가상
+   장르 참고: 상대 의도 예보(덱빌더), 정책 = 끝까지 가는 패시브(로그라이크),
+   카드 성장·황금 카드, 짧은 판, 겹겹이 쌓는 연출(흔들림·도장·파티클·소리)
+   ===================================================================== */
+const $ = s => document.querySelector(s);
+const app = $('#app');
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+const NARMI = '🧑‍💼', DARI = '🐥';
+const STAGES = [{ icon: '🏠', name: '차고' }, { icon: '🔧', name: '작업실' }, { icon: '🏭', name: '공장' }, { icon: '🌏', name: '세계' }];
+const FIELDS = { fire: { i: '🔥', n: '산림' }, water: { i: '💧', n: '수해' }, road: { i: '🚸', n: '교통' }, cold: { i: '❄️', n: '한파' } };
+const KW = {
+  unknown: { i: '❓', n: '아직 몰라요', d: '대응력이 판에 낼 때 정해져요. 🥽 안경으로 미리 볼 수 있어요.' },
+  grow: { i: '🌱', n: '자라요', d: '재난을 처리하거나 대장을 공격하면 실적 +1. 실적이 차면 한 단계 자라요(+1/+1). 다음 판에도 그대로!' },
+  retry: { i: '🔁', n: '고쳐서 다시', d: '판에서 사라지면 고친 판(+1/+1)으로 손에 돌아와요. 판마다 1번.' },
+  guard: { i: '🛡️', n: '지켜요', d: '재난은 이 카드부터 공격해야 해요. 마을을 지켜줘요.' },
+  rush: { i: '⚡', n: '즉시 출동', d: '낸 턴에 바로 처리할 수 있어요.' },
+  hunter: { i: '🎯', n: '노려요', d: '마을 대신 내 카드 중 가장 센 카드를 노려요.' },
+};
+const POLICIES = {
+  budget: { i: '💰', n: '시범구매 예산 확대', d: '매 판 첫 턴 예산 +1', real: '2026년 혁신제품 시범구매 예산 839억 원' },
+  priority: { i: '🏷️', n: '혁신제품 우선구매', d: '매 턴 처음 내는 🌱 카드 예산 -1', real: '공공기관이 혁신제품을 먼저 사도록 돕는 제도' },
+  immunity: { i: '🛡️', n: '구매 면책', d: '🌱 카드가 판에서 사라질 때마다 카드 1장 뽑기', real: '새 기술을 써본 공무원을 결과로 탓하지 않아요' },
+  feedback: { i: '✉️', n: '피드백 강화', d: '🔁 고친 판이 +2/+2로 돌아와요', real: '시범사용 결과를 기업에 돌려줘 제품을 더 좋게' },
+  aitrack: { i: '🤖', n: 'AI 전용트랙', d: '🌱 카드를 판에 낼 때마다 대응력 +1', real: '2026년 시범구매에 AI 분야 전용트랙 신설' },
+  techeval: { i: '🔍', n: '기술 중심 평가', d: '🥽 안경 예산 0 · 가짜 AI는 손에 오자마자 들통', real: '겉모습보다 기술로 평가해요' },
+  global: { i: '🌏', n: '해외실증 지원', d: '🏭공장 이상 카드가 재난을 처리하면 대장 힘 -2', real: '혁신제품이 해외에서도 실증하도록 지원' },
+  joint: { i: '🤝', n: '공동수급', d: '판에 🌱 카드가 3장 이상이면 🌱 카드 모두 대응력 +1', real: '여러 기업이 힘을 모아 함께 계약해요' },
+  market: { i: '🖥️', n: '나라장터 연결', d: '매 판 카드 1장 더 들고 시작', real: '공공조달 온라인 장터, 나라장터' },
+};
+
+/* ---------- 카드 ---------- */
+const C = {
+  raccoon: { type: 'new', field: 'fire', name: 'AI 산불 카메라', who: '너구리 박사', art: '🦝', prop: '📷', cost: 1, atk: [1, 3], hp: 2, kw: ['unknown', 'grow', 'retry'],
+    text: '주인공 카드! 🏭공장이 되면 🛡️, 🌏세계가 되면 낼 때 재난 전체에 2 피해.', eye: '실험실에선 잘 됐대요. 써봐야 진짜 실력을 알아요!' },
+  drone: { type: 'new', field: 'fire', name: '산불 순찰 드론', who: '고슴도치 대표', art: '🦔', prop: '🛸', cost: 2, atk: 3, hp: 1, kw: ['rush', 'grow'], text: '빠르지만 약해요.', eye: '열정은 최고! 몸은 조금 약해요.' },
+  otter: { type: 'new', field: 'water', name: 'AI 물 감지 센서', who: '수달 엔지니어', art: '🦦', prop: '💧', cost: 2, atk: [0, 2], hp: 4, kw: ['unknown', 'guard', 'grow'], text: '튼튼하게 마을을 지켜요.', eye: '물 관련이면 진심이에요.' },
+  hamster: { type: 'new', field: 'road', name: 'AI 횡단보도', who: '햄찌 공방', art: '🐹', prop: '🚦', cost: 2, atk: 2, hp: 2, kw: ['grow'], text: '낼 때 가장 센 재난의 대응력 -1.', onPlay: 'weaken', eye: '작고 꼼꼼해요.' },
+  sheep: { type: 'new', field: 'cold', name: 'AI 안부 스피커', who: '양 할머니', art: '🐑', prop: '🔊', cost: 3, atk: 1, hp: 4, kw: ['grow'], text: '내 턴이 끝날 때 마을 안심 +2.', endTurn: 2, eye: '"내가 써보고 만들었지." 진심이 느껴져요.' },
+  tower: { type: 'old', name: '감시탑', who: '튼튼전자', art: '🏢', prop: '🗼', cost: 3, atk: 2, hp: 4, kw: ['guard'], text: '늘 무난해요. 자라지는 않아요.', eye: '많이 써서 믿을 만해요.' },
+  pump: { type: 'old', name: '소방 펌프차', who: '튼튼전자', art: '🏢', prop: '🚒', cost: 4, atk: 4, hp: 4, kw: [], text: '힘은 세지만 비싸요.', eye: '많이 써서 믿을 만해요.' },
+  sign: { type: 'old', name: '안전 표지판', who: '튼튼전자', art: '🏢', prop: '🚸', cost: 1, atk: 0, hp: 3, kw: ['guard'], text: '막아주기만 해요.', eye: '많이 써서 믿을 만해요.' },
+  trial: { type: 'spell', name: '먼저 써보기', who: '이번 턴 🌱 카드 1장 예산 -2', art: '📜', prop: '🆓', cost: 0, text: '나라가 먼저 사서 써봐요. (시범구매)', spell: 'trial' },
+  letter: { type: 'spell', name: '고칠 점 편지', who: '🌱 카드 +1/+1, 성장 1칸', art: '✉️', prop: '✏️', cost: 1, text: '써보고 고칠 점을 회사에 알려줘요. (피드백)', spell: 'letter', target: true },
+  spread: { type: 'spell', name: '다른 곳도 사요', who: '🌱 카드 1장 복사해서 판에', art: '🤝', prop: '📦', cost: 2, text: '다른 공공기관도 사서 써요. (판로 확대)', spell: 'spread', target: true },
+  fox: { type: 'new', field: 'fire', name: 'AI 산림 지도', who: '여우 연구소', art: '🦊', prop: '🗺️', cost: 2, atk: 1, hp: 3, kw: ['grow'], text: '낼 때 카드 1장 뽑기.', onPlay: 'draw',
+    pitch: '숲 지도를 AI가 매일 새로 그려요! 불나기 쉬운 곳이 한눈에!', eye: '작은 회사예요. 아직 공공기관에서 써본 적이 없어요.' },
+  badger: { type: 'new', field: 'water', name: 'AI 배수 로봇', who: '오소리 기계', art: '🦡', prop: '🤖', cost: 3, atk: 3, hp: 3, kw: ['rush', 'grow'], text: '바로 출동해요.',
+    pitch: '비 오면 배수구로 출동! 막힌 곳을 뻥 뚫어요.', eye: '센서가 좋아요. 처음이라 조금 서툴 수 있어요.' },
+  beaver: { type: 'new', field: 'water', name: 'AI 물막이 벽', who: '비버 건설', art: '🦫', prop: '🧱', cost: 4, atk: 3, hp: 6, kw: ['guard', 'grow'], text: '든든하게 막아요.',
+    pitch: '물이 넘치면 벽이 스르륵 올라와요!', eye: '튼튼해요. 아직 큰 비에선 안 써봤어요.' },
+  owl: { type: 'new', field: 'road', name: 'AI 밤길 가로등', who: '부엉이 공방', art: '🦉', prop: '💡', cost: 3, atk: 2, hp: 3, kw: ['guard', 'grow'], text: '낼 때 내 다른 카드 튼튼함 +1.', onPlay: 'fortify',
+    pitch: '밤길이 무서운 아이들, 제 가로등이 같이 걸어요.', eye: '실험은 잘 됐어요. 비 오는 날 시험은 아직이에요.' },
+  rabbit: { type: 'new', field: 'road', name: 'AI 통학 버스 알림', who: '토끼 모빌리티', art: '🐰', prop: '🚌', cost: 2, atk: 2, hp: 2, kw: ['rush', 'grow'], text: '낼 때 가장 약한 재난에 1 피해.', onPlay: 'zap',
+    pitch: '버스가 어디쯤인지 아이 폰으로 딱! 길에서 안 기다려요.', eye: '빠르고 똑똑해요. 아직 큰 도시에선 안 써봤어요.' },
+  penguin: { type: 'new', field: 'cold', name: 'AI 빙판 경보', who: '펭귄 스타트업', art: '🐧', prop: '⚠️', cost: 2, atk: [1, 4], hp: 3, kw: ['unknown', 'grow', 'retry'], text: '실력이 들쭉날쭉! 써봐야 알아요.',
+    pitch: '빙판을 미리 알려드려요! 아직 써본 곳은 없지만요…', eye: '실력이 1~4로 들쭉날쭉. 그래도 고쳐서 다시 오는 회사예요.' },
+  cat: { type: 'new', field: 'cold', name: 'AI 안부 문자', who: '고양이 대표', art: '🐱', prop: '💌', cost: 1, atk: 1, hp: 2, kw: ['grow'], text: '내 턴이 끝날 때 마을 안심 +1.', endTurn: 1,
+    pitch: '혼자 계신 어르신께 매일 안부 문자를 보내요. 냥.', eye: '작지만 꾸준해요. 어르신들 반응이 좋대요.' },
+  tower2: { type: 'old', name: '신형 감시탑', who: '튼튼전자', art: '🏢', prop: '🗼', cost: 4, atk: 3, hp: 5, kw: ['guard'], text: '믿을 만해요. 자라지는 않아요.',
+    pitch: '저희는 늘 하던 대로, 튼튼하게 만듭니다.', eye: '많이 써서 믿을 만해요. 대신 회사가 더 자라진 않아요.' },
+  pump2: { type: 'old', name: '대형 펌프차', who: '튼튼전자', art: '🏢', prop: '🚒', cost: 5, atk: 5, hp: 5, kw: [], text: '크고 비싸요. 자라지는 않아요.',
+    pitch: '큰 불도 큰 물도, 크게 퍼냅니다.', eye: '힘이 세지만 비싸요. 회사는 그대로예요.' },
+  fake: { type: 'fake', name: '만능 AI 예언 거울', who: '무엇이든AI', art: '🕶️', prop: '🪞', cost: 1, atk: 5, hp: 5, kw: [], text: 'AI가 날씨도 재난도 다~ 해결합니다!',
+    pitch: 'AI가 날씨도, 재난도, 다~ 해결합니다! 가격도 단돈 1!', eye: '커튼 뒤에서 사람이 손으로 버튼을 누르고 있어요! 가짜 AI예요.' },
+  smoke: { type: 'enemy', name: '연기', art: '💨', atk: 1, hp: 1, kw: [] },
+  wildfire: { type: 'enemy', name: '들불', art: '🔥', atk: 3, hp: 2, kw: [] },
+  wind: { type: 'espell', name: '마른 바람', art: '🌬️', text: '재난 전체 대응력 +1' },
+  rain: { type: 'enemy', name: '빗물', art: '💧', atk: 2, hp: 2, kw: [] },
+  flood: { type: 'enemy', name: '불어난 물', art: '🌊', atk: 3, hp: 4, kw: [] },
+  thunder: { type: 'espell', name: '천둥', art: '⛈️', text: '가장 센 내 카드에 3 피해' },
+  scooter: { type: 'enemy', name: '씽씽 킥보드', art: '🛴', atk: 1, hp: 1, kw: ['rush'] },
+  car: { type: 'enemy', name: '서두르는 차', art: '🚙', atk: 3, hp: 1, kw: ['rush'] },
+  bus: { type: 'enemy', name: '큰 버스', art: '🚌', atk: 4, hp: 5, kw: [] },
+  fog: { type: 'espell', name: '아침 안개', art: '🌫️', text: '내 카드 하나가 한 턴 쉼' },
+  ice: { type: 'enemy', name: '빙판', art: '🧊', atk: 0, hp: 4, kw: ['guard'] },
+  blizzard: { type: 'enemy', name: '눈보라', art: '🌨️', atk: 3, hp: 3, kw: [] },
+  icicle: { type: 'enemy', name: '고드름', art: '🥶', atk: 4, hp: 2, kw: ['hunter'] },
+};
+for (const k in C) C[k].id = k;
+const START_DECK = ['raccoon', 'drone', 'otter', 'hamster', 'sheep', 'tower', 'tower', 'pump', 'sign', 'trial', 'letter', 'spread'];
+const DRAFTS = [['badger', 'beaver', 'tower2'], ['rabbit', 'fake', 'owl'], ['penguin', 'cat', 'pump2']];
+
+/* ---------- 계절 ---------- */
+const SEASONS = [
+  { key: 'spring', name: '봄', icon: '🌸', field: 'fire', boss: '산불 도깨비', art: '👺', hp: 15, chip: 0, scene: '🌲⛰️🌲🌳🌲', org: ['🚒', '○○소방서', '산불 감시 기술', '올봄 산불이 걱정돼요. 감시할 사람이 모자라요!'],
+    script: [['smoke'], ['smoke', 'smoke'], ['wildfire'], ['wind', 'smoke'], ['wildfire', 'smoke']], loop: [['wildfire'], ['smoke', 'smoke', 'smoke'], ['wind', 'wildfire']], rage: ['wildfire', 'smoke'],
+    say: { start: '후후, 올봄엔 숲을 다 태워주마~', hurt: ['앗 따가워!', '내 불씨가!', '이, 이럴 수가!'], play: ['연기 나간다~', '활활!'], rage: '화났다! 불씨야, 사방으로 튀어라!', lose: '으으… 올봄은 내가 졌다!' } },
+  { key: 'summer', name: '여름', icon: '☀️', field: 'water', boss: '장마 구름', art: '🌧️', hp: 19, chip: 1, scene: '🏙️🌧️🏢🌧️🏙️', org: ['🏛️', '○○구청', '지하차도 침수 대비 기술', '장마가 와요. 지하차도가 잠길까 걱정이에요!'],
+    script: [['rain'], ['rain', 'FAKE'], ['flood'], ['thunder', 'rain'], ['flood', 'FAKE']], loop: [['flood'], ['rain', 'thunder'], ['flood', 'rain']], rage: ['flood'],
+    say: { start: '주룩주룩~ 다 잠겨라!', hurt: ['으앗 막혔어!', '물길이…!', '비가 안 새잖아!'], play: ['쏴아아~', '우르릉!'], rage: '화났다! 소나기 두 배다!', lose: '흑흑… 비 그쳤다…', chip: '빗방울 똑똑~ 지붕이 샌다!' } },
+  { key: 'autumn', name: '가을', icon: '🍂', field: 'road', boss: '바쁜 등굣길', art: '🚗', hp: 22, chip: 1, scene: '🏫🌳🚦🌳🏫', org: ['🏫', '○○초등학교', '통학로 안전 기술', '개학했어요. 통학로가 너무 위험해요!'],
+    script: [['scooter'], ['car'], ['car', 'scooter'], ['bus'], ['fog', 'car']], loop: [['bus'], ['car', 'car'], ['fog', 'car', 'scooter']], rage: ['bus'],
+    say: { start: '빵빵! 다 비켜, 바쁘다 바빠!', hurt: ['끼익!', '신호에 걸렸잖아!', '천천히 갈게요…'], play: ['부릉부릉!', '빵빵!'], rage: '화났다! 지각이다, 다 비켜!', lose: '알았어요… 학교 앞에선 천천히…', chip: '빵빵! 깜짝 놀랐지?' } },
+  { key: 'winter', name: '겨울', icon: '❄️', field: 'cold', boss: '한파 할멈', art: '🧙', hp: 26, chip: 2, power: 'freeze', scene: '🏠❄️🏘️❄️🏠', org: ['🏠', '○○주민센터', '홀몸 어르신 안부 기술', '한파예요. 혼자 사는 어르신들이 걱정돼요!'],
+    script: [['ice'], ['blizzard'], ['ice', 'icicle'], ['blizzard'], ['icicle', 'icicle']], loop: [['blizzard', 'ice'], ['icicle', 'blizzard'], ['icicle', 'icicle']], rage: ['blizzard', 'icicle'],
+    say: { start: '호오… 다 꽁꽁 얼려주마.', hurt: ['어이쿠, 따뜻해!', '내 얼음이 녹아!', '이 동네 왜 이리 훈훈해?'], play: ['꽁꽁~', '휘이잉~'], rage: '화났다! 북극 바람이다!', lose: '봄이 오는구나… 내가 졌다.', chip: '으슬으슬~ 보일러가 꺼졌네?' } },
+];
+
+/* ---------- 상태 ---------- */
+const G = { deck: [], stage: 0, caught: 0, fooled: 0, tips: {}, sound: true, bonusLetter: false, snapshot: [], policies: [], villageSum: 0, retries: 0, firsts: new Set(), grows: 0, fixes: 0, feedbacks: 0 };
+let B = null, UID = 1;
+const hasP = id => G.policies.includes(id);
+const need = st => st + 2; // 다음 단계까지 필요한 실적: 차고→작업실 2, 작업실→공장 3, 공장→세계 4
+const S = () => SEASONS[G.stage];
+
+function newRun() {
+  G.deck = START_DECK.map(id => ({ id, stage: 0, xp: 0 }));
+  Object.assign(G, { stage: 0, caught: 0, fooled: 0, tips: {}, bonusLetter: false, policies: [], villageSum: 0, retries: 0, firsts: new Set(), grows: 0, fixes: 0, feedbacks: 0 });
+}
+function makeCard(entry) {
+  const t = C[entry.id];
+  const st = t.type === 'new' ? (entry.stage || 0) : 0;
+  const c = { uid: UID++, id: t.id, t, type: t.type, cost: t.cost, ref: entry.temp ? null : entry, stage: st, xp: entry.xp || 0,
+    kw: new Set(t.kw || []), bonusA: 0, retried: false, isCopy: false, fixed: false };
+  if (t.type !== 'spell' && t.type !== 'espell') {
+    if (Array.isArray(t.atk)) { if (st >= 1) { c.baseAtk = t.atk[1] + st; c.kw.delete('unknown'); } else c.baseAtk = null; }
+    else c.baseAtk = t.atk + st;
+    c.hp = c.maxHp = t.hp + st;
+    if (t.id === 'raccoon' && st >= 2) c.kw.add('guard');
+  }
+  return c;
+}
+const fieldOn = c => !!(B && c.type === 'new' && c.t.field && c.t.field === S().field);
+function atkOf(c) {
+  if (c.baseAtk == null) return null;
+  let a = c.baseAtk + c.bonusA;
+  if (fieldOn(c)) a += 1;
+  if (B && hasP('joint') && c.type === 'new' && B.board.includes(c) && B.board.filter(m => m.type === 'new').length >= 3) a += 1;
+  return Math.max(0, a);
+}
+function effCost(c) {
+  let k = c.cost;
+  if (c.type === 'new' || c.type === 'fake') { k -= B.discount; if (hasP('priority') && !B.priorityUsed) k -= 1; }
+  return Math.max(0, k);
+}
+const elOf = c => c && document.querySelector(`[data-uid="${c.uid}"]`);
+
+/* ---------- 소리 ---------- */
+let AC = null;
+const SFX = {
+  card: [[620, .04, 'sine']], draw: [[880, .03, 'sine'], [1100, .04, 'sine']], play: [[180, .08, 'triangle'], [260, .1, 'triangle']], stamp: [[80, .16, 'square'], [60, .1, 'square']],
+  hit: [[150, .09, 'square'], [100, .07, 'square']], big: [[90, .12, 'sawtooth'], [60, .2, 'square']], die: [[320, .06, 'sawtooth'], [160, .14, 'sawtooth']],
+  grow: [[523, .08], [659, .08], [784, .08], [1046, .22]], gold: [[784, .07], [988, .07], [1175, .07], [1568, .3]], heal: [[660, .07], [880, .12]],
+  win: [[523, .12], [659, .12], [784, .12], [1046, .4]], lose: [[392, .2], [330, .2], [262, .45]], combo: [[700, .05], [900, .05], [1200, .1]],
+  fake: [[220, .14, 'sawtooth'], [180, .14, 'sawtooth'], [110, .35, 'sawtooth']], eye: [[880, .05], [1320, .09]],
+  freeze: [[1200, .05, 'triangle'], [900, .05, 'triangle'], [1500, .12, 'triangle']], boss: [[110, .14, 'sawtooth'], [90, .14, 'sawtooth']], coin: [[1300, .04], [1700, .06]],
+};
+function sfx(n) {
+  if (!G.sound || !SFX[n]) return;
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    let t = AC.currentTime;
+    for (const [f, d, type] of SFX[n]) {
+      const o = AC.createOscillator(), g = AC.createGain();
+      o.type = type || 'sine'; o.frequency.value = f;
+      g.gain.setValueAtTime(.1, t); g.gain.exponentialRampToValueAtTime(.001, t + d);
+      o.connect(g).connect(AC.destination); o.start(t); o.stop(t + d + .03); t += d * .9;
+    }
+  } catch (e) { }
+}
+
+/* ---------- 연출 ---------- */
+let toastT = 0, sayT = 0, tipT = 0;
+function toast(msg, ms = 1600) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), ms); }
+function say(msg, ms = 1800) { const s = $('#say'); s.textContent = `${S().art} ${msg}`; s.classList.add('on'); clearTimeout(sayT); sayT = setTimeout(() => s.classList.remove('on'), ms); }
+function tip(key, html, force) {
+  if (!force && G.tips[key]) return; G.tips[key] = 1;
+  $('#tipText').innerHTML = html; $('#tip').classList.add('on');
+  clearTimeout(tipT); tipT = setTimeout(() => $('#tip').classList.remove('on'), 7500);
+}
+$('#tip').addEventListener('click', () => $('#tip').classList.remove('on'));
+function center(el) { const r = el.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }
+function floatAt(el, text, cls = 'dmg') {
+  if (!el) return; const [x, y] = center(el);
+  const d = document.createElement('div'); d.className = 'float ' + cls; d.textContent = text;
+  d.style.left = x + 'px'; d.style.top = y + 'px'; $('#fx').appendChild(d); setTimeout(() => d.remove(), 1000);
+}
+function burst(el, chars, n = 8) {
+  if (!el) return; const [x, y] = center(el);
+  for (let i = 0; i < n; i++) {
+    const p = document.createElement('div'); p.className = 'particle'; p.textContent = pick(chars);
+    const ang = Math.random() * Math.PI * 2, dist = 50 + Math.random() * 70;
+    p.style.left = x + 'px'; p.style.top = y + 'px';
+    p.style.setProperty('--dx', Math.cos(ang) * dist + 'px'); p.style.setProperty('--dy', Math.sin(ang) * dist + 'px'); p.style.setProperty('--rot', rnd(-180, 180) + 'deg');
+    $('#fx').appendChild(p); setTimeout(() => p.remove(), 820);
+  }
+}
+function banner(text, cls = '') { const d = document.createElement('div'); d.className = 'banner ' + cls; d.textContent = text; $('#fx').appendChild(d); setTimeout(() => d.remove(), 1700); }
+function bigSeal(text, small) { const d = document.createElement('div'); d.className = 'bigseal'; d.innerHTML = `${text}${small ? `<small>${small}</small>` : ''}`; $('#fx').appendChild(d); setTimeout(() => d.remove(), 1600); }
+function shakeEl(el) { if (!el) return; el.classList.remove('shakeel'); void el.offsetWidth; el.classList.add('shakeel'); }
+function screenShake(power) {
+  const cls = power >= 5 ? 'shake-l' : power >= 3 ? 'shake-m' : 'shake-s';
+  app.classList.remove('shake-s', 'shake-m', 'shake-l'); void app.offsetWidth; app.classList.add(cls);
+}
+function stampOn(el, text) { if (!el) return; const s = document.createElement('div'); s.className = 'stamp'; s.textContent = text; el.appendChild(s); setTimeout(() => s.remove(), 650); }
+async function lunge(a, t) {
+  if (!a || !t) return;
+  const [ax, ay] = center(a), [tx, ty] = center(t);
+  a.classList.add('lunging'); a.style.transform = `translate(${(tx - ax) * .8}px,${(ty - ay) * .8}px) scale(1.15)`;
+  await sleep(170);
+  a.style.transition = 'transform .2s ease-out'; a.style.transform = '';
+  shakeEl(t);
+}
+function news(text) {
+  if (!B) return; B.news = text;
+  const el = $('#tk'); if (el) { el.textContent = text; el.classList.remove('new'); void el.offsetWidth; el.classList.add('new'); }
+}
+
+/* ---------- 정보창 ---------- */
+function showInfo(c) {
+  if (!c) { $('#info').classList.remove('on'); return; }
+  const t = c.t;
+  const lab = { new: '🌱 새 기술 · 혁신제품', old: '🏢 많이 쓰는 제품 · 우수조달', spell: '📜 조달 지원', enemy: '재난', fake: '🌱 새 기술(?)' }[c.type];
+  let h = `<div class="lab">${lab}</div><h3>${t.art} ${t.name}</h3>`;
+  if (t.who && c.type !== 'spell') h += `<div class="lab">${t.who}</div>`;
+  if (c.type !== 'spell') { const a = atkOf(c); h += `<div class="st">대응력 ${a == null ? (t.atk[0] + '~' + t.atk[1] + ' (?)') : a} · 튼튼함 ${c.hp}/${c.maxHp}</div>`; }
+  if (c.type === 'spell') h += `<div style="margin-top:4px"><b>${t.who}</b></div>`;
+  if (t.text) h += `<div style="margin-top:4px">${t.text}</div>`;
+  if (t.field) h += `<div class="st">${FIELDS[t.field].i} ${FIELDS[t.field].n} 현장 ${fieldOn(c) ? '<span style="color:#b8860b">· 지금 현장에 딱 맞아요! 대응력 +1</span>' : ''}</div>`;
+  if (c.type !== 'fake' && c.kw.size) h += `<div class="kwl">${[...c.kw].map(k => `<div>${KW[k].i} <b>${KW[k].n}</b> — ${KW[k].d}</div>`).join('')}</div>`;
+  if (c.type === 'new') h += `<div class="st">${STAGES[c.stage].icon} ${STAGES[c.stage].name}${c.stage < 3 ? ` · 다음 단계까지 실적 ${c.xp}/${need(c.stage)}` : ' · 최고 단계!'}</div>`;
+  if (c.fixed) h += `<div class="st" style="color:#2f6fd0">✉️ 고친 판</div>`;
+  if (c.isCopy) h += `<div class="st" style="color:#2f6fd0">🤝 다른 곳도 산 복사본</div>`;
+  $('#info').innerHTML = h; $('#info').classList.add('on');
+}
+
+/* ---------- 카드 그리기 ---------- */
+function cardHTML(c, where) {
+  const t = c.t, isSpell = c.type === 'spell';
+  let cls = `card t-${c.type}`;
+  if (c.type === 'new' && c.stage >= 2) cls += ' gold';
+  if (c.type === 'new' && c.stage >= 3) cls += ' holo';
+  const hd = { new: c.stage >= 2 ? '★ 우수 혁신제품' : '혁신제품', old: '우수조달', spell: '조달 지원', enemy: '재난', fake: '✨ AI 혁신제품 ✨' }[c.type];
+  if (where === 'hand' && B) {
+    if (B.sel === c.uid) cls += ' sel';
+    if (B.mode === 'eye') cls += ' eye-pick';
+    else if (B.turn === 'player' && !B.busy && effCost(c) <= B.mana && (isSpell ? spellUsable(c) : B.board.length < 5)) cls += ' playable';
+    if (c.drawn) cls += ' drawn';
+  }
+  let intent = '';
+  if ((where === 'mine' || where === 'foe') && B) {
+    if (c.kw.has('guard')) cls += ' guard';
+    if (where === 'mine') {
+      if (c.frozenNow) cls += ' frozen';
+      else if (B.turn === 'player' && c.canAttack && atkOf(c) > 0 && !B.mode) cls += ' ready';
+      else if (B.turn === 'player' && !c.canAttack && c.justPlayed) cls += ' sleepy';
+      if (B.attacker === c.uid) cls += ' attacker';
+      if (B.mode === 'spell' && c.type === 'new') cls += ' friend-target';
+    } else {
+      if (B.mode === 'attack' && validTargets().includes(c)) cls += ' targetable';
+      const a = atkOf(c);
+      if (a > 0) { const tg = enemyTargetOf(c); intent = `<div class="intent ${tg === 'hero' ? 'v' : ''}">${tg === 'hero' ? '🏠' : tg.kw.has('guard') ? '🛡️' : '🎯'} ${a}</div>`; }
+    }
+    if (c.enter) cls += ' enter';
+  }
+  const a = atkOf(c);
+  let costHtml = '';
+  if (where === 'hand' || where === 'preview' || where === 'fb') { const ec = (where === 'hand' && B) ? effCost(c) : c.cost; costHtml = `<div class="cost ${ec < c.cost ? 'cheap' : ''}">${ec}</div>`; }
+  let stg = '';
+  if (c.type === 'new' || c.type === 'fake') {
+    const st = c.type === 'fake' ? 0 : c.stage;
+    const nd = need(st), xp = Math.min(nd, c.xp);
+    const dots = c.type === 'new' && st < 3 ? `<i>${'●'.repeat(xp)}${'○'.repeat(nd - xp)}</i>` : '';
+    stg = `<div class="stg">${STAGES[st].icon}${dots}</div>`;
+  }
+  let tag = '';
+  if (c.fixed) tag = '<div class="tag">✉️ 고친 판</div>'; else if (c.isCopy) tag = '<div class="tag">🤝 복사본</div>';
+  const kwStr = c.type === 'fake' ? '✨✨' : [...c.kw].map(k => KW[k].i).join('');
+  const fieldStr = t.field ? `<span class="field ${fieldOn(c) ? 'on' : ''}">${FIELDS[t.field].i}</span>` : '';
+  const buffed = a != null && c.baseAtk != null && a > c.baseAtk;
+  const stats = isSpell ? '' : `<div class="atk ${a == null ? 'q' : buffed ? 'up' : ''}">${a == null ? '?' : a}</div><div class="hp ${c.hp < c.maxHp ? 'hurt' : ''}">${c.hp}</div>`;
+  const act = { hand: 'hand', mine: 'mine', foe: 'foe', fb: 'fbPick' }[where] || '';
+  return `<div class="${cls}" data-uid="${c.uid}" ${act ? `data-act="${act}"` : ''} ${c.refIdx != null ? `data-ref="${c.refIdx}"` : ''}>
+    ${intent}${costHtml}${stg}${tag}<div class="hd">${hd}</div>
+    <div class="art"><span class="a1">${t.art}</span>${t.prop ? `<span class="a2">${t.prop}</span>` : ''}</div>
+    <div class="nm">${t.name}</div>${t.who ? `<div class="who">${t.who}</div>` : ''}
+    <div class="ft">${fieldStr}<span>${kwStr}</span></div>${stats}</div>`;
+}
+
+/* ---------- 전투 ---------- */
+function startBattle() {
+  const s = S();
+  G.snapshot = G.deck.map(e => e.stage);
+  let pile = shuffle(G.deck);
+  if (G.stage === 0) { const i = pile.findIndex(e => e.id === 'raccoon'); if (i > 0) pile.unshift(pile.splice(i, 1)[0]); }
+  B = { bossHp: s.hp, bossMax: s.hp, village: 20, villageMax: 20, mana: 0, maxMana: 0, hand: [], board: [], eboard: [], pile, eTurn: 0, turn: 'player',
+    discount: 0, priorityUsed: false, eyeUsed: false, sel: null, mode: null, attacker: null, spellCard: null, busy: true, over: false, combo: 0, enraged: false,
+    news: `[나라장터] ${s.org[1]}, '${s.org[2]}' 구매 요청 접수` };
+  const n = 3 + (hasP('market') ? 1 : 0);
+  for (let i = 0; i < n; i++) drawCard(true);
+  if (G.bonusLetter) { B.hand.push(makeCard({ id: 'letter', temp: true })); G.bonusLetter = false; }
+  renderBattle();
+  overlay(`<div class="panel" style="background:#f4f1ea"><div class="doc">
+    <h3>구 매 요 청 서</h3>
+    <table><tr><td>요청 기관</td><td>${s.org[0]} ${s.org[1]}</td></tr>
+    <tr><td>요청 내용</td><td>${s.org[2]}</td></tr>
+    <tr><td>현장</td><td>${FIELDS[s.field].i} ${FIELDS[s.field].n} <span style="font-size:12px;opacity:.7">(${FIELDS[s.field].i} 카드 대응력 +1)</span></td></tr>
+    <tr><td>사연</td><td>"${s.org[3]}"</td></tr>
+    <tr><td>상대 재난</td><td>${s.art} ${s.boss} (힘 ${s.hp})</td></tr></table>
+    <div style="margin-top:10px;font-size:13px;opacity:.75">조달청 혁신조달팀 귀하 · ${s.icon} ${s.name}</div>
+    <div class="seal" id="reqSeal">조달청<br>접수</div></div>
+    <button class="big-btn" data-act="reqOk" style="margin-top:14px">접수하고 출동! 📮</button></div>`);
+}
+async function reqOk() {
+  if (!B || !B.busy || B.started) return; B.started = true;
+  const seal = $('#reqSeal'); if (seal) { seal.classList.add('on'); sfx('stamp'); }
+  await sleep(550); closeOverlay();
+  B.busy = false; say(S().say.start, 2200);
+  await playerTurnStart(true);
+}
+function drawCard(silent) {
+  if (!B.pile.length) { if (!silent) toast('더 뽑을 카드가 없어요'); return null; }
+  const e = B.pile.shift(); const c = makeCard(e);
+  if (B.hand.length >= 6) { if (!silent) toast(`손이 꽉 찼어요! ${c.t.name} 카드를 놓쳤어요`); return null; }
+  if (!silent) c.drawn = true;
+  B.hand.push(c); if (!silent) sfx('draw');
+  return c;
+}
+async function playerTurnStart(first) {
+  B.turn = 'player'; B.discount = 0; B.priorityUsed = false; B.eyeUsed = false; B.mode = null; B.sel = null; B.attacker = null; B.combo = 0;
+  B.maxMana = Math.min(6, B.maxMana + 1 + (first && hasP('budget') ? 1 : 0)); B.mana = B.maxMana;
+  for (const m of B.board) {
+    m.justPlayed = false;
+    if (m.frozen) { m.frozen = false; m.frozenNow = true; m.canAttack = false; } else { m.frozenNow = false; m.canAttack = true; }
+  }
+  if (!first) drawCard();
+  renderBattle(); sfx('coin');
+  B.hand.forEach(c => c.drawn = false);
+  if (G.stage === 0) {
+    if (first) tip('t1', `<b>달이</b>: 팀장님! 카드를 누르면 설명, <b>한 번 더 누르면 판에 내요</b>. 박사님 카드는 예산 1이에요. 첫 손님이 되어볼까요?`);
+    else if (B.board.some(m => m.canAttack)) tip('t3', `<b>달이</b>: 판의 내 카드를 누르고 → <b>처리할 재난</b>을 눌러요! 재난 머리 위 <b>🏠숫자</b>는 다음 턴에 마을이 받을 피해예요.`);
+  }
+  if (B.hand.some(c => c.type === 'fake')) tip('fakehand', `<b>달이</b>: 어? 손에 반짝이 카드가… 예산 1에 5/5? 너무 좋아 보여요. <b>🥽 안경</b>으로 먼저 볼까요?`);
+  if (B.board.some(m => m.frozenNow)) tip('frz', `<b>달이</b>: 꽁꽁 언 카드는 이번 턴에 쉬어요. 다음 턴엔 녹아요!`);
+  if (G.stage === 1 && first) tip('field', `<b>달이</b>: 이번 현장은 💧 <b>수해</b>! 💧 표시 카드는 <b>대응력 +1</b>이에요. 딱 맞는 기술을 이어주는 게 조달청 일이죠!`);
+}
+function validTargets() { const g = B.eboard.filter(m => m.kw.has('guard')); return g.length ? g : [...B.eboard, 'boss']; }
+function spellUsable(c) { return !c.t.target || B.board.some(m => m.type === 'new'); }
+function noMovesLeft() {
+  if (B.turn !== 'player' || B.busy) return false;
+  const canPlay = B.hand.some(c => c.type !== 'fake' && effCost(c) <= B.mana && (c.type === 'spell' ? spellUsable(c) : B.board.length < 5));
+  const canHit = B.board.some(m => m.canAttack && !m.frozenNow && atkOf(m) > 0);
+  return !canPlay && !canHit;
+}
+function enemyTargetOf(e) {
+  const guards = B.board.filter(m => m.kw.has('guard'));
+  if (guards.length) return guards.slice().sort((x, y) => x.hp - y.hp)[0];
+  if (e.kw.has('hunter') && B.board.length) return B.board.slice().sort((x, y) => (atkOf(y) || 0) - (atkOf(x) || 0))[0];
+  return 'hero';
+}
+function nextPlays() { const s = S(), n = B.eTurn + 1; return n <= s.script.length ? s.script[n - 1] : s.loop[(n - s.script.length - 1) % s.loop.length]; }
+function forecastVillage() {
+  let d = 0;
+  for (const e of B.eboard) if (atkOf(e) > 0 && enemyTargetOf(e) === 'hero') d += atkOf(e);
+  if (S().chip && B.eTurn + 1 >= 2) d += S().chip;
+  return d;
+}
+function renderBattle() {
+  if (!B) return;
+  const s = S();
+  const bossTarget = B.mode === 'attack' && validTargets().includes('boss');
+  const pips = Array.from({ length: 6 }, (_, i) => `<span class="pip ${i >= B.maxMana ? 'lock' : i < B.mana ? '' : 'off'}">🪙</span>`).join('');
+  const np = B.turn === 'player' && B.started ? nextPlays().map(id => id === 'FAKE' ? '❔' : C[id].art).join(' ') : '';
+  const fc = B.turn === 'player' && B.started ? forecastVillage() : 0;
+  document.body.classList.remove('inbattle'); app.innerHTML = `<div class="screen battle bg-${s.key}">
+    <div class="scenery">${s.scene}</div>
+    <div class="topbar"><span class="pill">${s.icon} ${s.name} · ${G.stage + 1}/4</span>
+      <div class="pols">${G.policies.map(p => `<div class="pol-ico" data-act="pol" data-id="${p}" title="${POLICIES[p].n}">${POLICIES[p].i}</div>`).join('')}</div>
+      <span class="pill">🂠 ${B.pile.length}</span>
+      <button class="icon-btn" data-act="sound">${G.sound ? '🔊' : '🔇'}</button></div>
+    <div class="ticker"><b>나라장터 속보</b><span id="tk">${B.news}</span></div>
+    <div class="bossrow"><div id="boss" class="portrait boss ${bossTarget ? 'targetable' : ''} ${B.enraged ? 'enraged' : ''}" data-act="boss">
+      <div class="p-art">${s.art}</div><div><div class="p-name">${s.boss}${B.enraged ? ' 😡' : ''}</div>
+      <div class="hpbar"><i style="width:${B.bossHp / B.bossMax * 100}%"></i><b>힘 ${B.bossHp}/${B.bossMax}</b></div></div></div>
+      ${np ? `<div class="forecast">📡 <b>재난 예보</b><br>다음 턴: ${np}${s.chip && B.eTurn + 1 >= 2 ? ` · 잔펀치 ${s.chip}` : ''}</div>` : ''}</div>
+    <div class="board foe">${B.eboard.map(m => cardHTML(m, 'foe')).join('') || '<div class="empty">재난 판</div>'}</div>
+    <div class="mid"><span class="${B.turn === 'player' ? '' : 'enemy'}">${B.turn === 'player' ? '나르미의 턴' : s.boss + '의 턴'}</span>${B.combo >= 2 ? `<span class="combo">결재 콤보 x${B.combo}</span>` : ''}</div>
+    <div class="board mine">${B.board.map(m => cardHTML(m, 'mine')).join('') || '<div class="empty">내 판</div>'}</div>
+    <div class="playerbar">
+      <div id="hero" class="portrait hero"><span class="idcard">조달청 혁신조달팀장</span><div class="p-art">${NARMI}</div><div><div class="p-name">나르미 · 마을 안심</div>
+        <div class="hpbar"><i style="width:${Math.max(0, B.village) / B.villageMax * 100}%"></i><b>♥ ${Math.max(0, B.village)}/${B.villageMax}</b></div></div>
+        ${fc > 0 ? `<span class="dmgwarn">예보 -${fc}</span>` : ''}</div>
+      <div class="mana"><div class="pips">${pips}</div>예산 ${B.mana}/${B.maxMana}</div>
+      <button class="eye-btn ${B.eyeUsed ? 'used' : ''} ${B.mode === 'eye' ? 'active' : ''}" data-act="eye">🥽 안경<small>예산 ${hasP('techeval') ? 0 : 1}</small></button>
+      <button class="end-btn ${noMovesLeft() ? 'pulse' : ''}" data-act="end" ${B.turn !== 'player' || B.busy ? 'disabled' : ''}>결재 ✒️<small>턴 끝</small></button>
+    </div>
+    <div class="hand">${B.hand.map(c => cardHTML(c, 'hand')).join('')}</div>
+  </div>`;
+  document.body.classList.add('inbattle'); B.board.forEach(m => m.enter = false); B.eboard.forEach(m => m.enter = false);
+}
+
+/* ----- 카드 내기 ----- */
+async function tryPlay(c) {
+  if (B.turn !== 'player' || B.busy) return;
+  const cost = effCost(c);
+  if (cost > B.mana) { toast('예산이 모자라요 💰'); shakeEl(elOf(c)); return; }
+  if (c.type === 'spell') {
+    if (c.t.target) {
+      if (!spellUsable(c)) { toast('판에 🌱 새 기술 카드가 있어야 써요'); return; }
+      B.mode = 'spell'; B.spellCard = c; B.sel = c.uid; renderBattle(); showInfo(c); toast('효과를 줄 내 🌱 카드를 눌러요'); return;
+    }
+    await castSpell(c, null); return;
+  }
+  if (B.board.length >= 5) { toast('판이 꽉 찼어요'); return; }
+  B.busy = true; showInfo(null);
+  B.mana -= cost; B.hand = B.hand.filter(x => x !== c); B.sel = null;
+  if (c.type === 'new' || c.type === 'fake') { B.discount = 0; B.priorityUsed = true; }
+  let revealed = false;
+  if (c.baseAtk == null) { c.baseAtk = rnd(c.t.atk[0], c.t.atk[1]); revealed = true; }
+  c.canAttack = c.kw.has('rush'); c.justPlayed = true; c.enter = true; c.frozenNow = false;
+  if (c.type === 'new' && hasP('aitrack')) c.bonusA += 1;
+  B.board.push(c); B.combo++;
+  sfx('play'); renderBattle(); await sleep(140);
+  sfx('stamp'); screenShake(1); stampOn(elOf(c), c.type === 'old' ? '구매 결재' : '첫 손님 결재');
+  if (c.type === 'new' && !G.firsts.has(c.id)) { G.firsts.add(c.id); news(`[속보] ${c.t.who} '${c.t.name}', 공공기관 첫 납품!`); }
+  if (c.type === 'fake') news(`[광고] 무엇이든AI "AI가 다~ 해결합니다!"`);
+  if (revealed) { await sleep(260); floatAt(elOf(c), `대응력 ${atkOf(c)}!`, 'buff'); burst(elOf(c), ['✨', '⭐'], 6); }
+  if (fieldOn(c)) { await sleep(200); floatAt(elOf(c), `${FIELDS[c.t.field].i} 현장 맞춤!`, 'buff'); }
+  if (c.type === 'new' && hasP('aitrack')) { await sleep(200); floatAt(elOf(c), '🤖 AI +1', 'buff'); }
+  await sleep(320);
+  await onPlayEffect(c);
+  await comboCheck();
+  if (revealed) tip('reveal', `<b>달이</b>: ❓였던 대응력이 <b>${c.baseAtk}</b>(으)로 정해졌어요! 새 기술은 <b>써봐야</b> 진짜 실력을 알아요.`);
+  if (G.stage === 0) tip('t2', `<b>달이</b>: 판에 낸 카드는 💤 <b>다음 턴부터</b> 재난을 처리해요. 할 게 없으면 <b>[결재 ✒️]</b>로 턴을 끝내요!`);
+  if (c.type === 'old') tip('old', `<b>달이</b>: 🏢 많이 쓰는 제품은 믿음직하지만 <b>자라지 않아요</b>. 🌱 새 기술은 쓸수록 자라요!`);
+  B.busy = false; renderBattle();
+}
+async function comboCheck() {
+  if (B.combo >= 2) { renderBattle(); sfx('combo'); }
+  if (B.combo === 3) {
+    banner('⚡ 결재 콤보! 카드 1장 뽑기', 'gold'); await sleep(450);
+    const d = drawCard(); renderBattle(); if (d) floatAt(elOf(d), '+1장', 'buff');
+    tip('combo', `<b>달이</b>: 한 턴에 카드 3장을 결재하면 <b>결재 콤보</b>! 카드를 1장 더 뽑아요.`);
+    await sleep(300);
+  }
+}
+async function onPlayEffect(c) {
+  const t = c.t;
+  if (t.onPlay === 'weaken' && B.eboard.length) {
+    const e = B.eboard.slice().sort((x, y) => atkOf(y) - atkOf(x))[0]; e.bonusA -= 1; renderBattle(); floatAt(elOf(e), '-1 🚦', 'dmg'); await sleep(350);
+  }
+  if (t.onPlay === 'draw') { const d = drawCard(); renderBattle(); if (d) floatAt(elOf(d), '+1장', 'buff'); await sleep(300); }
+  if (t.onPlay === 'fortify') {
+    for (const m of B.board) if (m !== c) { m.hp += 1; m.maxHp += 1; }
+    renderBattle(); B.board.forEach(m => m !== c && floatAt(elOf(m), '+1', 'heal')); await sleep(350);
+  }
+  if (t.onPlay === 'zap' && B.eboard.length) {
+    const e = B.eboard.slice().sort((x, y) => x.hp - y.hp)[0]; e.hp -= 1; renderBattle(); floatAt(elOf(e), '-1'); burst(elOf(e), ['⚡'], 5); sfx('hit'); await sleep(350); await cleanup();
+  }
+  if (c.id === 'raccoon' && c.stage >= 3 && B.eboard.length) {
+    banner('🌏 세계의 카메라! 재난 전체 2 피해', 'gold'); await sleep(500);
+    for (const e of B.eboard) { e.hp -= 2; floatAt(elOf(e), '-2'); burst(elOf(e), ['📸', '✨'], 4); }
+    sfx('big'); screenShake(4); await sleep(400); await cleanup();
+  }
+}
+async function castSpell(c, target) {
+  const cost = effCost(c);
+  if (cost > B.mana) { toast('예산이 모자라요 💰'); return; }
+  B.busy = true; showInfo(null);
+  B.mana -= cost; B.hand = B.hand.filter(x => x !== c); B.mode = null; B.sel = null; B.spellCard = null; B.combo++;
+  sfx('play'); renderBattle();
+  if (c.t.spell === 'trial') {
+    B.discount = 2; banner('📜 먼저 써보기! 🌱 예산 -2'); sfx('coin');
+    tip('trial', `<b>달이</b>: 나라가 먼저 사서 써보는 거예요(<b>시범구매</b>). 이번 턴 🌱 카드 1장이 2 싸져요!`);
+  } else if (c.t.spell === 'letter') {
+    target.bonusA += 1; target.hp += 1; target.maxHp += 1; G.feedbacks++; renderBattle();
+    floatAt(elOf(target), '+1/+1 ✉️', 'buff'); burst(elOf(target), ['✉️', '✏️'], 5); sfx('heal'); await sleep(450);
+    await gainXp(target);
+    tip('letter', `<b>달이</b>: 고칠 점을 알려주면 회사가 더 좋아져요(<b>피드백</b>)!`);
+  } else if (c.t.spell === 'spread') {
+    if (B.board.length >= 5) toast('판이 꽉 찼어요. 복사본은 못 냈어요');
+    else {
+      const cp = makeCard({ id: target.id, stage: target.stage, temp: true });
+      cp.baseAtk = target.baseAtk; cp.bonusA = target.bonusA; cp.isCopy = true; cp.retried = true; cp.canAttack = false; cp.justPlayed = true; cp.enter = true;
+      B.board.push(cp); renderBattle(); sfx('stamp'); stampOn(elOf(cp), '다른 곳도 구매');
+      news(`[경제] '${target.t.name}' 다른 기관도 구매… 판로 넓어져`);
+      tip('spread', `<b>달이</b>: 한 곳에서 잘 쓰면 다른 곳도 사요(<b>판로 확대</b>)!`);
+    }
+  }
+  await sleep(380); await comboCheck(); B.busy = false; renderBattle();
+}
+
+/* ----- 성장 ----- */
+async function gainXp(c) {
+  if (c.type !== 'new' || c.stage >= 3) return;
+  c.xp += 1; if (c.ref && !c.isCopy) c.ref.xp = c.xp;
+  renderBattle();
+  if (c.xp >= need(c.stage)) {
+    c.xp = 0; c.stage += 1; c.baseAtk = (c.baseAtk ?? 0) + 1; c.hp += 1; c.maxHp += 1; c.kw.delete('unknown');
+    if (c.id === 'raccoon' && c.stage >= 2) c.kw.add('guard');
+    if (c.ref && !c.isCopy) { c.ref.stage = Math.max(c.ref.stage, c.stage); c.ref.xp = 0; G.grows++; }
+    renderBattle(); const el = elOf(c);
+    if (c.stage >= 2) { sfx('gold'); banner(`★ ${c.t.art} ${STAGES[c.stage].icon} ${STAGES[c.stage].name}! 우수 혁신제품`, 'gold'); burst(el, ['⭐', '✨', '🏆'], 14); screenShake(3); }
+    else { sfx('grow'); banner(`${c.t.art} ${STAGES[c.stage].icon} ${STAGES[c.stage].name}로 성장!`, 'grow'); burst(el, ['🌱', '✨'], 10); }
+    floatAt(el, '+1/+1', 'buff');
+    news(c.stage === 3 ? `[국제] ${c.t.who}, 해외 조달시장 진출! 🌏` : c.stage === 2 ? `[경제] ${c.t.who} 공장 착공… "처음 써준 덕분"` : `[지역] ${c.t.who} 차고에 불 켜졌다… 작업실로 확장`);
+    await sleep(950);
+    tip('grow', `<b>달이</b>: 자랐어요! 🏠차고 → 🔧작업실 → 🏭공장(★황금 카드) → 🌏세계. <b>자란 카드는 다음 판에도 그대로</b>예요!`);
+  }
+}
+
+/* ----- 정리 ----- */
+async function cleanup() {
+  const deadE = B.eboard.filter(m => m.hp <= 0), deadP = B.board.filter(m => m.hp <= 0);
+  if (!deadE.length && !deadP.length) return;
+  deadE.forEach(m => burst(elOf(m), [m.t.art, '💥'], 7));
+  [...deadE, ...deadP].forEach(m => { const el = elOf(m); el && el.classList.add('dying'); });
+  sfx('die'); await sleep(330);
+  B.eboard = B.eboard.filter(m => m.hp > 0); B.board = B.board.filter(m => m.hp > 0);
+  for (const m of deadP) {
+    if (m.type === 'new' && hasP('immunity')) { const d = drawCard(); renderBattle(); if (d) floatAt(elOf(d), '🛡️ 면책 +1장', 'buff'); }
+    if (m.kw.has('retry') && !m.retried && m.type === 'new') {
+      const nc = makeCard(m.ref || { id: m.id, stage: m.stage, temp: true });
+      const plus = hasP('feedback') ? 2 : 1;
+      nc.ref = m.ref; nc.baseAtk = (m.baseAtk ?? m.t.atk[1]); nc.bonusA = plus; nc.hp += plus; nc.maxHp += plus;
+      nc.kw.delete('unknown'); nc.retried = true; nc.fixed = true; nc.xp = m.xp;
+      if (B.hand.length < 6) {
+        B.hand.push(nc); G.fixes++; renderBattle(); floatAt(elOf(nc), '🔁 고쳐서 다시!', 'buff'); sfx('heal');
+        tip('retry', `<b>달이</b>: 사라졌지만 <b>고친 판</b>으로 손에 돌아왔어요! 실패해도 고칠 점을 알면 더 좋아져요.`);
+      }
+    }
+  }
+  renderBattle();
+}
+
+/* ----- 내 처리 ----- */
+async function doAttack(att, tgt) {
+  B.mode = null; B.attacker = null;
+  if (!validTargets().includes(tgt)) { toast('🛡️ 지켜요 재난부터 처리해야 해요!'); renderBattle(); return; }
+  B.busy = true; att.canAttack = false; showInfo(null); renderBattle();
+  const tEl = tgt === 'boss' ? $('#boss') : elOf(tgt);
+  await lunge(elOf(att), tEl);
+  const a = atkOf(att);
+  sfx(a >= 4 ? 'big' : 'hit'); screenShake(a);
+  if (tgt === 'boss') {
+    B.bossHp = Math.max(0, B.bossHp - a);
+    floatAt($('#boss'), '-' + a, a >= 4 ? 'dmg big' : 'dmg'); burst($('#boss'), ['💥', '✨'], a >= 4 ? 10 : 5); renderBattle();
+    if (Math.random() < .5) say(pick(S().say.hurt), 1200);
+    await sleep(260);
+    if (B.bossHp <= 0) { await winBattle(); return; }
+    if (att.hp > 0) await gainXp(att);
+    await rageCheck();
+  } else {
+    const ta = atkOf(tgt);
+    tgt.hp -= a; att.hp -= ta;
+    floatAt(elOf(tgt), '-' + a); if (ta > 0) floatAt(elOf(att), '-' + ta);
+    renderBattle(); await sleep(260);
+    const killed = tgt.hp <= 0;
+    if (killed && att.hp > 0) await gainXp(att);
+    if (killed && hasP('global') && att.type === 'new' && att.stage >= 2) {
+      B.bossHp = Math.max(0, B.bossHp - 2); renderBattle(); floatAt($('#boss'), '-2 🌏'); shakeEl($('#boss'));
+      await sleep(300); if (B.bossHp <= 0) { await cleanup(); await winBattle(); return; }
+    }
+    await cleanup();
+    await rageCheck();
+  }
+  if (B.over) return;
+  B.busy = false; renderBattle();
+  if (B.turn === 'player' && noMovesLeft()) tip('endhint', `<b>달이</b>: 더 할 게 없으면 <b>[결재 ✒️]</b>로 턴을 끝내요!`);
+}
+async function rageCheck() {
+  if (B.enraged || B.over || B.bossHp > B.bossMax / 2) return;
+  B.enraged = true; const s = S();
+  sfx('boss'); screenShake(5); banner(`😡 ${s.boss}가 화났다!`, 'bad'); say(s.say.rage, 2000);
+  news(`[긴급] ${s.boss} 거세져… 현장 긴장`);
+  renderBattle(); await sleep(800);
+  for (const id of s.rage) { if (B.eboard.length >= 5) break; const e = makeCard({ id, temp: true }); e.enter = true; e.summonedNow = true; B.eboard.push(e); sfx('play'); renderBattle(); await sleep(300); }
+  tip('rage', `<b>달이</b>: 재난 대장은 힘이 절반 아래로 떨어지면 <b>화가 나서</b> 재난을 더 불러요. 조금만 더!`);
+}
+
+/* ----- 안경 ----- */
+async function useEye(c) {
+  B.mode = null;
+  const cost = hasP('techeval') ? 0 : 1;
+  if (B.mana < cost) { toast('예산이 모자라요 💰'); renderBattle(); return; }
+  B.mana -= cost; B.eyeUsed = true; sfx('eye');
+  if (c.type === 'fake') { await exposeFakeInHand(c); return; }
+  if (c.baseAtk == null) {
+    c.baseAtk = rnd(c.t.atk[0], c.t.atk[1]); renderBattle();
+    floatAt(elOf(c), `대응력 ${atkOf(c)}!`, 'buff'); toast(`🥽 ${c.t.name}: 대응력 ${c.baseAtk}${fieldOn(c) ? '(+현장 1)' : ''} 확인!`);
+  } else { renderBattle(); toast(`🥽 ${c.t.eye || '숨긴 것 없이 보이는 그대로예요.'}`, 2200); }
+}
+async function exposeFakeInHand(c) {
+  const wasBusy = B.busy; B.busy = true; renderBattle();
+  banner('🥽 커튼 뒤에 사람이 버튼을 누르고 있다!', 'bad'); sfx('fake');
+  const el = elOf(c); burst(el, ['🤚', '💦', '❗'], 8); el && el.classList.add('dying'); await sleep(650);
+  B.hand = B.hand.filter(x => x !== c); G.caught++;
+  say('칫… 들켰네.', 1500); news(`[사회] 무엇이든AI, 시연 중 '사람 손' 들통… 기술 평가 탈락`);
+  renderBattle(); await sleep(350);
+  const d = drawCard(); renderBattle(); if (d) floatAt(elOf(d), '+1장', 'buff');
+  tip('caught', `<b>달이</b>: 겉만 AI인 가짜를 걸러냈어요! 🕵️ 조달청은 <b>겉모습이 아니라 기술</b>로 평가해요.`, true);
+  B.busy = wasBusy && B.turn !== 'player' ? true : false; renderBattle();
+}
+
+/* ----- 턴 끝 ----- */
+async function endTurn() {
+  if (B.turn !== 'player' || B.busy) return;
+  B.busy = true; B.mode = null; B.sel = null; B.attacker = null; showInfo(null);
+  sfx('stamp');
+  for (const m of B.board) {
+    if (m.t.endTurn) {
+      const before = B.village; B.village = Math.min(B.villageMax, B.village + m.t.endTurn);
+      if (B.village > before) { renderBattle(); floatAt(elOf(m), `♥+${B.village - before}`, 'heal'); floatAt($('#hero'), `+${B.village - before}`, 'heal'); sfx('heal'); await sleep(320); }
+    }
+    m.frozenNow = false;
+  }
+  B.discount = 0;
+  await enemyTurn();
+}
+
+/* ----- 재난 턴 ----- */
+async function enemyTurn() {
+  const s = S();
+  B.turn = 'enemy'; renderBattle(); await sleep(450);
+  for (const m of B.board.filter(m => m.type === 'fake' && !m.exposed)) {
+    m.exposed = true; banner('바람에 커튼이 펄럭… 사람이 누르고 있었다!', 'bad'); sfx('fake'); await sleep(700);
+    m.baseAtk = 0; m.bonusA = 0; m.hp = 1; m.maxHp = 1; m.kw.clear();
+    B.village -= 3; G.fooled++; renderBattle(); floatAt(elOf(m), '앗…', 'info'); burst(elOf(m), ['🤚', '💦'], 6); floatAt($('#hero'), '-3'); shakeEl($('#hero')); screenShake(3);
+    say('하하! 속았지~', 1500); news('[사회] 무엇이든AI "만능 거울", 알고 보니 사람이 손으로…');
+    tip('fooled', `<b>달이</b>: 으앗, 겉만 AI였어요! 다음엔 <b>🥽 안경</b>으로 먼저 확인해요. 너무 좋아 보이면 의심!`, true);
+    await sleep(800);
+    if (B.village <= 0) { await loseBattle(); return; }
+  }
+  B.eTurn++;
+  if (s.power === 'freeze' && B.eTurn >= 2) {
+    const cand = B.board.filter(m => atkOf(m) > 0);
+    if (cand.length) {
+      const m = cand.sort((x, y) => atkOf(y) - atkOf(x))[0]; m.frozen = true;
+      say('꽁꽁 얼어라~', 1400); sfx('freeze'); renderBattle(); floatAt(elOf(m), '❄️ 꽁꽁', 'info'); burst(elOf(m), ['❄️'], 6); await sleep(650);
+      tip('freezeinfo', `<b>달이</b>: 한파 할멈이 가장 센 카드를 얼렸어요. 다음 턴에 한 번 쉬어요.`);
+    }
+  }
+  const plays = B.eTurn <= s.script.length ? s.script[B.eTurn - 1] : s.loop[(B.eTurn - s.script.length - 1) % s.loop.length];
+  for (const id of plays) { if (B.over) return; await enemyPlay(id); }
+  if (B.over) return;
+  for (const e of B.eboard.slice()) {
+    if (B.over) return;
+    if (!B.eboard.includes(e) || e.hp <= 0) continue;
+    if (e.summonedNow && !e.kw.has('rush')) continue;
+    if (atkOf(e) <= 0) continue;
+    if (await enemyAttack(e)) return;
+  }
+  B.eboard.forEach(e => e.summonedNow = false);
+  if (s.chip && B.eTurn >= 2) {
+    say(s.say.chip, 1300); sfx('boss');
+    B.village -= s.chip; renderBattle(); floatAt($('#hero'), '-' + s.chip); shakeEl($('#hero'));
+    tip('chip', `<b>달이</b>: 재난 대장은 매 턴 마을을 조금씩 괴롭혀요(<b>잔펀치</b>). 오래 끌면 불리해요!`);
+    await sleep(550);
+    if (B.village <= 0) { await loseBattle(); return; }
+  }
+  await sleep(200);
+  B.busy = false;
+  await playerTurnStart(false);
+}
+async function enemyPlay(id) {
+  const s = S();
+  if (id === 'FAKE') {
+    if (B.hand.length < 6) {
+      const fc = makeCard({ id: 'fake', temp: true }); fc.drawn = true; B.hand.push(fc); renderBattle();
+      floatAt(elOf(fc), '✨ 반짝!', 'buff'); toast('누군가 손패에 반짝이는 카드를 넣었어요…', 1800); sfx('card'); await sleep(900);
+      if (hasP('techeval')) { banner('🔍 기술 중심 평가! 바로 들통', 'gold'); await sleep(400); await exposeFakeInHand(fc); }
+    }
+    return;
+  }
+  const t = C[id];
+  if (t.type === 'espell') {
+    banner(`${t.art} ${t.name}! ${t.text}`, 'bad'); sfx('boss'); await sleep(600);
+    if (id === 'wind') { B.eboard.forEach(e => e.bonusA += 1); renderBattle(); B.eboard.forEach(e => { floatAt(elOf(e), '+1', 'buff'); burst(elOf(e), ['🌬️'], 3); }); }
+    if (id === 'thunder') {
+      if (B.board.length) { const m = B.board.slice().sort((x, y) => (atkOf(y) || 0) - (atkOf(x) || 0))[0]; m.hp -= 3; renderBattle(); floatAt(elOf(m), '-3'); burst(elOf(m), ['⚡'], 6); screenShake(3); sfx('big'); await sleep(350); await cleanup(); }
+      else { B.village -= 3; renderBattle(); floatAt($('#hero'), '-3'); shakeEl($('#hero')); if (B.village <= 0) { await loseBattle(); return; } }
+    }
+    if (id === 'fog') { const cand = B.board.filter(m => !m.frozen); if (cand.length) { const m = pick(cand); m.frozen = true; renderBattle(); floatAt(elOf(m), '🌫️ 쉬어요', 'info'); } }
+    await sleep(450); return;
+  }
+  if (B.eboard.length >= 5) return;
+  const e = makeCard({ id, temp: true }); e.summonedNow = true; e.enter = true;
+  B.eboard.push(e); sfx('play'); renderBattle();
+  if (Math.random() < .35) say(pick(s.say.play), 1100);
+  if (e.kw.has('guard')) tip('eguard', `<b>달이</b>: 🛡️ 지켜요 재난! <b>이것부터 처리</b>해야 다른 재난이나 대장을 공격할 수 있어요.`);
+  if (e.kw.has('rush')) tip('erush', `<b>달이</b>: ⚡ 즉시 출동 재난은 나오자마자 공격해요! 🛡️ 카드로 막아요.`);
+  if (e.kw.has('hunter')) tip('ehunt', `<b>달이</b>: 🎯 고드름은 마을 대신 <b>가장 센 내 카드</b>를 노려요!`);
+  await sleep(420);
+}
+async function enemyAttack(e) {
+  const tgt = enemyTargetOf(e);
+  const tEl = tgt === 'hero' ? $('#hero') : elOf(tgt);
+  await lunge(elOf(e), tEl);
+  const a = atkOf(e); sfx(a >= 4 ? 'big' : 'hit'); screenShake(a);
+  if (tgt === 'hero') {
+    B.village -= a; renderBattle(); floatAt($('#hero'), '-' + a, a >= 4 ? 'dmg big' : 'dmg'); shakeEl($('#hero'));
+    await sleep(320);
+    if (B.village <= 0) { await loseBattle(); return true; }
+  } else {
+    const da = atkOf(tgt) || 0;
+    tgt.hp -= a; e.hp -= da;
+    renderBattle(); floatAt(elOf(tgt), '-' + a); if (da > 0) floatAt(elOf(e), '-' + da);
+    await sleep(280);
+    if (e.hp <= 0 && tgt.hp > 0) await gainXp(tgt);
+    await cleanup();
+  }
+  await sleep(120);
+  return false;
+}
+
+/* ----- 승패 ----- */
+function streetHTML(highlight) {
+  const ents = G.deck.filter(e => C[e.id].type === 'new');
+  return `<div class="street">${ents.map(e => {
+    const i = G.deck.indexOf(e); const up = highlight && e.stage > (G.snapshot[i] ?? 0);
+    return `<div class="bld ${up ? 'up' : ''}">${up ? '<span class="upmark">성장!</span>' : ''}<div class="b1">${STAGES[e.stage].icon}</div><div class="b2">${C[e.id].art}</div>${C[e.id].name}<br><b>${STAGES[e.stage].name}</b></div>`;
+  }).join('')}</div>`;
+}
+function overlay(html) { const o = $('#overlay'); o.innerHTML = html; o.classList.add('on'); }
+function closeOverlay() { $('#overlay').classList.remove('on'); $('#overlay').innerHTML = ''; }
+async function winBattle() {
+  if (B.over) return;
+  B.over = true; B.busy = true; const s = S();
+  G.villageSum += Math.max(0, B.village);
+  say(s.say.lose, 2200); sfx('win'); screenShake(6);
+  burst($('#boss'), ['🎉', '✨', '⭐', s.art], 18);
+  await sleep(300); bigSeal('재난 해결', `${s.icon} ${s.name} · 검수 합격`);
+  news(`[속보] 올${s.name} ${s.boss} 피해 크게 줄어… "새 기술 덕분"`);
+  await sleep(1600);
+  const grew = G.deck.some((e, i) => e.stage > (G.snapshot[i] ?? 0));
+  overlay(`<div class="panel"><div style="font-size:46px">${s.icon}🎉</div><h2>${s.name}을 지켜냈어요!</h2>
+    <div class="doc" style="margin:8px 0"><h3>납 품 검 수</h3>
+    <table><tr><td>요청 기관</td><td>${s.org[0]} ${s.org[1]}</td></tr><tr><td>결과</td><td>✅ 검수 합격 · 남은 마을 안심 ♥${Math.max(0, B.village)}</td></tr>
+    <tr><td>기관 한마디</td><td>"새 기술 덕분에 마을이 안심했어요!"</td></tr></table>
+    <div class="seal on" style="right:10px;bottom:6px;width:62px;height:62px;font-size:13px">검수<br>합격</div></div>
+    <p style="font-family:var(--title);margin-top:10px">🏘️ 혁신 거리 ${grew ? '— 믿어준 회사가 자랐어요!' : ''}</p>
+    ${streetHTML(true)}
+    <button class="big-btn" data-act="afterWin">다음으로 ▶</button></div>`);
+}
+async function loseBattle() {
+  if (B.over) return;
+  B.over = true; B.busy = true; sfx('lose'); G.retries++;
+  await sleep(500);
+  G.bonusLetter = true;
+  overlay(`<div class="panel"><div style="font-size:46px">😢</div><h2>마을 안심이 바닥났어요</h2>
+    <p>괜찮아요. <b>실패해도 탓하지 않아요.</b> (구매 면책)<br>자란 회사들과 결재한 정책은 그대로예요.</p>
+    <p>✉️ <b>고칠 점 편지</b> 1장을 들고 다시 도전해요!</p>
+    <p style="font-size:14px;opacity:.75">💡 재난 머리 위 🏠숫자 = 다음 턴 마을 피해. 🛡️ 카드로 막거나 먼저 처리해요.</p>
+    ${streetHTML(true)}
+    <button class="big-btn" data-act="retry">다시 도전 🔁</button></div>`);
+}
+
+/* ---------- 컷신 ---------- */
+let cutState = null;
+function cut(lines, bg) { return new Promise(res => { cutState = { lines, i: 0, bg, res }; drawCut(); }); }
+function drawCut() {
+  const { lines, i, bg } = cutState; const L = lines[i];
+  document.body.classList.remove('inbattle'); app.innerHTML = `<div class="screen ${bg || 'bg-office'}"><div class="cut" data-act="cutNext">
+    <button class="skip" data-act="cutSkip">건너뛰기 ⏭</button>
+    ${L.prop ? `<div class="prop">${L.prop}</div>` : ''}
+    <div class="speaker">${L.face}</div>
+    <div class="box"><div class="name">${L.name}</div><div class="text">${L.text}</div>
+    <div class="nav"><span>${i + 1} / ${lines.length}</span><span>눌러서 계속 ▶</span></div></div></div></div>`;
+}
+function cutNext() { if (!cutState) return; sfx('card'); cutState.i++; if (cutState.i >= cutState.lines.length) { const r = cutState.res; cutState = null; r(); } else drawCut(); }
+function cutSkip() { if (!cutState) return; const r = cutState.res; cutState = null; r(); }
+const L = (face, name, text, prop) => ({ face, name, text, prop });
+
+/* ---------- 흐름 ---------- */
+function titleScreen() {
+  closeOverlay(); B = null;
+  const ids = ['raccoon', 'otter', 'sheep', 'hamster', 'drone'];
+  const fan = ids.map((id, i) => {
+    const c = makeCard({ id, stage: i === 2 ? 2 : i === 0 ? 3 : 0, temp: true }); const rot = (i - 2) * 13;
+    return cardHTML(c, 'preview').replace('class="card', `style="transform:translateX(-50%) rotate(${rot}deg) translateY(${Math.abs(i - 2) * 7}px);animation-delay:${i * .08}s" class="card`);
+  }).join('');
+  document.body.classList.remove('inbattle'); app.innerHTML = `<div class="screen bg-title"><div class="title-wrap">
+    <div class="badge-top">2026 조달청 AI 게임 공모전 · AI 게임 부문</div>
+    <div class="title-fan">${fan}</div>
+    <h1>첫 손님</h1>
+    <div class="sub">나라가 처음 사주는 날 · 혁신조달 카드 배틀</div>
+    <div class="copy">"처음은, 나라가 믿어줄게요."</div>
+    <button class="big-btn" data-act="start" style="margin-top:10px">출근하기 🏢</button>
+    <button class="ghost-btn" data-act="sound">${G.sound ? '🔊 소리 켜짐' : '🔇 소리 꺼짐'}</button>
+    <div class="small-note">시제품 · 그림은 임시 이모지 · 등장 회사·제품·재난 캐릭터는 모두 가상이에요</div>
+  </div></div>`;
+}
+async function startGame() {
+  newRun();
+  await cut([
+    L(NARMI, '나르미', '오늘부터 조달청 혁신조달팀장! 첫 출근이다.', '🏢 조달청 혁신조달팀'),
+    L(DARI, '달이', '팀장님, 우리 일은 새 기술과 도움이 필요한 곳을 이어주는 거예요. 아, 누가 문을 두드려요!'),
+    L('🦝', '너구리 박사', '저… AI 산불 카메라를 만들었는데요. "써본 곳이 없다"고 아무도 안 사줘요.'),
+    L('🦝', '너구리 박사', '봄까지만 해보고… 차고 문 닫으려고요.', '🏠 불 꺼진 차고'),
+    L(NARMI, '나르미', '그럼 나라가 첫 손님이 될게요! 마침 소방서에서 산불 걱정이 많대요.'),
+    L(DARI, '달이', '내 카드 = 새 기술 회사들! 믿어줄수록 자라서 더 세져요. 자, 첫 구매 요청서가 왔어요!'),
+  ], 'bg-office');
+  await seasonIntro();
+}
+async function seasonIntro() {
+  const s = S();
+  const lines = [L(s.art, s.boss, s.say.start, `${s.icon} ${s.name} · ${G.stage + 1}/4`)];
+  if (G.stage === 1) lines.unshift(L(DARI, '달이', '요즘 "뭐든 다 되는 AI"라는 회사가 돌아다닌대요. 너무 좋아 보이면 🥽 안경으로 확인!'));
+  if (G.stage === 3) lines.unshift(L('🏢', '튼튼전자 대표', '저희도 처음엔 차고였어요. 누가 먼저 사줘서 여기까지 온 거죠. 마지막 겨울, 힘내요!'));
+  await cut(lines, 'bg-' + s.key);
+  startBattle();
+}
+async function afterWin() {
+  closeOverlay();
+  const rac = G.deck.find(e => e.id === 'raccoon');
+  if (G.stage === 0) {
+    await cut([rac.stage >= 1 ? L('🦝', '너구리 박사', '차고에 불이 켜졌어요! 처음으로… 누가 써줬어요!', '🔧 불 켜진 작업실')
+      : L('🦝', '너구리 박사', '아직 차고는 깜깜하지만… 다음엔 꼭 제 카메라를 써주세요!', '🏠 아직 불 꺼진 차고')], 'bg-spring');
+  }
+  if (G.stage >= 3) { await ending(); return; }
+  policyScreen();
+}
+
+/* ---------- 정책 결재 ---------- */
+let polOpts = null;
+function policyScreen() {
+  const pool = Object.keys(POLICIES).filter(p => !hasP(p));
+  polOpts = shuffle(pool).slice(0, 3);
+  document.body.classList.remove('inbattle'); app.innerHTML = `<div class="screen bg-office"><div class="choose dark">
+    <h2>📜 조달 정책 결재</h2>
+    <div class="lead">계절을 잘 지켜서 <b>새 정책</b>을 하나 만들 수 있어요.<br>결재할 정책 하나를 골라요. 정책은 <b>끝까지</b> 효과가 있어요!</div>
+    <div class="opts">${polOpts.map((p, i) => { const P = POLICIES[p]; return `<div class="polcard" data-act="polPick" data-id="${p}">
+      <div class="no">조달 정책 제2026-${String(G.stage * 3 + i + 1).padStart(2, '0')}호</div>
+      <div class="pi">${P.i}</div><h3>${P.n}</h3><div class="pd">${P.d}</div><div class="pr">📌 진짜 조달청: ${P.real}</div></div>`; }).join('')}</div>
+  </div></div>`;
+  tip('policy', `<b>달이</b>: 정책은 진짜 조달청 제도를 바탕으로 만들었어요. 내 덱에 맞는 걸 골라요!`);
+}
+async function polPick(id, el) {
+  if (!polOpts) return; polOpts = null;
+  G.policies.push(id); sfx('stamp'); stampOn(el, '결재 완료'); screenShake(2); burst(el, ['📜', '✨'], 8);
+  await sleep(800);
+  draftScreen();
+}
+
+/* ---------- 혁신제품 지정 심사회 ---------- */
+let D = null;
+function draftScreen() {
+  D = { ids: shuffle(DRAFTS[G.stage]), eye: 1, seen: {}, done: false };
+  drawDraft();
+  tip('draft', `<b>달이</b>: 혁신제품 지정 심사예요! 한 곳을 골라 <b>첫 손님</b>이 되면 그 카드가 덱에 들어와요. <b>🥽 안경은 한 번</b>. 카드 대신 <b>피드백</b>으로 내 카드를 키워도 돼요.`);
+  if (G.stage === 1) tip('draft2', `<b>달이</b>: 이번 심사엔 수상한 회사가 섞였대요. 너무 좋아 보이는 걸 안경으로 봐요!`, true);
+}
+function drawDraft() {
+  const ns = SEASONS[G.stage + 1];
+  document.body.classList.remove('inbattle'); app.innerHTML = `<div class="screen bg-${ns.key}"><div class="choose">
+    <h2>🎤 혁신제품 지정 심사회</h2>
+    <div class="lead">다음 현장: ${ns.icon} <b>${ns.name}</b> · ${FIELDS[ns.field].i} <b>${FIELDS[ns.field].n}</b> (${FIELDS[ns.field].i} 카드 대응력 +1)<br>누구의 <b>첫 손님</b>이 될까요? <span style="opacity:.7">(🥽 남은 횟수 ${D.eye})</span></div>
+    <div class="opts">${D.ids.map(id => {
+      const t = C[id]; const c = makeCard({ id, stage: 0, temp: true }); const seen = D.seen[id];
+      const match = t.field === ns.field;
+      const sc = id === 'fake' ? [seen ? '☆☆☆ (가짜)' : '★★★★★?', '★★★★★', '단돈 1!'] : [t.type === 'old' ? '★★★ 검증됨' : seen ? '★★★★' : '★★★?', match ? `✅ ${FIELDS[t.field].i} 딱 맞음` : t.field ? `${FIELDS[t.field].i} ${FIELDS[t.field].n}` : '일반', `예산 ${t.cost}`];
+      return `<div class="pitch ${D.done === id ? 'picked' : ''}" data-pid="${id}">
+        <div class="inv">${t.art}</div><div style="font-family:var(--title)">${t.who}</div>
+        <div class="bubble">"${t.pitch}"</div>
+        ${cardHTML(c, 'preview')}
+        <div class="score"><b>기술성</b><span>${sc[0]}</span><b>현장 맞춤</b><span>${sc[1]}</span><b>가격</b><span>${sc[2]}</span></div>
+        ${seen ? `<div class="honest ${id === 'fake' ? 'bad' : ''}">🥽 ${t.eye}</div>` : ''}
+        <div class="btns">
+          <button class="btn-eye" data-act="dEye" data-id="${id}" ${seen || D.eye <= 0 || D.done ? 'disabled style="opacity:.4"' : ''}>🥽 안경</button>
+          <button class="btn-pick" data-act="dPick" data-id="${id}" ${D.done ? 'disabled' : ''}>첫 손님 되기</button>
+        </div></div>`;
+    }).join('')}</div>
+    <div class="alt-row"><button class="alt-btn" data-act="dFeedback" ${D.done ? 'disabled' : ''}>✉️ 카드 대신 <b>피드백</b> — 내 🌱 카드 1장 한 단계 성장</button></div>
+  </div></div>`;
+}
+function draftEye(id) {
+  if (!D || D.eye <= 0 || D.seen[id] || D.done) return;
+  D.eye--; D.seen[id] = 1; sfx('eye');
+  if (id === 'fake') { sfx('fake'); toast('🥽 커튼 뒤에 사람이…! 가짜 AI예요'); }
+  drawDraft();
+}
+async function draftPick(id) {
+  if (!D || D.done) return;
+  D.done = id; sfx('stamp'); drawDraft();
+  const el = document.querySelector(`[data-pid="${id}"] .card`); stampOn(el, '첫 손님 결재'); screenShake(2);
+  G.deck.push({ id, stage: 0, xp: 0 });
+  if (id !== 'fake' && D.seen.fake) G.caught++;
+  await sleep(900);
+  const t = C[id], bg = 'bg-' + SEASONS[G.stage + 1].key;
+  if (id === 'fake') await cut([L('🕶️', '무엇이든AI', '감사합니다~ 저희 AI가 다~ 해결해 드릴게요. (히히)', '✨ 너무 좋아 보이는데…?')], bg);
+  else if (t.type === 'old') await cut([L('🏢', '튼튼전자', '늘 하던 대로 잘 해드릴게요.'), L(DARI, '달이', '믿음직하죠. 그런데… 새 기술 회사들은 이번에도 차고에 남았어요.')], bg);
+  else await cut([L(t.art, t.who, '정말요? 처음으로 누가 써준대요! 꼭 보답할게요!', `${STAGES[0].icon} 혁신제품 지정 → 덱에 들어왔어요`)], bg);
+  nextSeason();
+}
+function feedbackScreen() {
+  const ents = G.deck.map((e, i) => ({ e, i })).filter(o => C[o.e.id].type === 'new' && o.e.stage < 3);
+  if (!ents.length) { toast('더 키울 카드가 없어요'); return; }
+  const ns = SEASONS[G.stage + 1];
+  document.body.classList.remove('inbattle'); app.innerHTML = `<div class="screen bg-${ns.key}"><div class="choose">
+    <h2>✉️ 피드백 보내기</h2>
+    <div class="lead">써보고 느낀 <b>고칠 점</b>을 회사에 전해줘요.<br>고른 카드가 <b>한 단계 성장</b>해요! (진짜 조달청도 시범사용 결과를 기업에 피드백해요)</div>
+    <div class="fbgrid">${ents.map(o => { const c = makeCard({ ...o.e, temp: true }); c.refIdx = o.i; return cardHTML(c, 'fb'); }).join('')}</div>
+    <div class="alt-row"><button class="alt-btn" data-act="fbBack">← 심사회로 돌아가기</button></div>
+  </div></div>`;
+}
+async function fbPick(idx, el) {
+  const e = G.deck[idx]; if (!e || e.stage >= 3 || !D || D.done) return;
+  D.done = 'feedback';
+  e.stage++; e.xp = 0; G.grows++; G.feedbacks++;
+  sfx(e.stage >= 2 ? 'gold' : 'grow'); stampOn(el, '피드백 반영'); burst(el, ['✉️', '🌱', '✨'], 12); screenShake(2);
+  banner(`${C[e.id].art} ${STAGES[e.stage].icon} ${STAGES[e.stage].name}로 성장!`, e.stage >= 2 ? 'gold' : 'grow');
+  await sleep(1300);
+  await cut([L(C[e.id].art, C[e.id].who, '고칠 점을 알려주셔서 고맙습니다! 더 좋아져서 돌아올게요!', `${STAGES[e.stage].icon} ${STAGES[e.stage].name}`)], 'bg-' + SEASONS[G.stage + 1].key);
+  nextSeason();
+}
+function nextSeason() { D = null; G.stage++; seasonIntro(); }
+
+/* ---------- 엔딩 ---------- */
+async function ending() {
+  const rac = G.deck.find(e => e.id === 'raccoon');
+  const racLine = rac.stage >= 3 ? L('💌', '너구리 박사의 엽서', '"첫 손님, 고마워요! 지금은 다른 나라 산도 지키고 있어요." — 🌏 너구리 박사', '🌏 다른 나라에서 온 엽서')
+    : rac.stage >= 1 ? L('🦝', '너구리 박사', '차고가 작은 공장이 됐어요. 처음 믿어준 덕분에 여기까지 왔어요!', `${STAGES[rac.stage].icon} ${STAGES[rac.stage].name}`)
+    : L('🏠', '너구리 박사의 차고', '차고 문은 결국 닫혔어요… 누군가 처음 써줬다면 어땠을까요?', '🔒 닫힌 차고');
+  await cut([L(NARMI, '나르미', '네 계절이 지났다. 마을은… 무사하다!', '🎊 연말 업무 보고'), racLine,
+    L('🐣', '새 발명가', '똑똑… 저… 아무도 안 써본 기술인데요.'), L(NARMI, '나르미', '처음은, 나라가 믿어줄게요.')], 'bg-office');
+  const ents = G.deck.filter(e => C[e.id].type === 'new');
+  const stageSum = ents.reduce((a, e) => a + e.stage, 0);
+  const big = ents.filter(e => e.stage >= 2).length, any = ents.filter(e => e.stage >= 1).length;
+  const score = stageSum * 10 + G.villageSum + G.caught * 10 - G.fooled * 10 - G.retries * 10;
+  const grade = score >= 180 ? 'S' : score >= 130 ? 'A' : score >= 80 ? 'B' : 'C';
+  const type = big >= 2 ? ['🚀', '미래를 연 첫 손님', '새 기술을 믿어줬더니, 회사들이 공장을 세우고 세계로 나갔어요!']
+    : any >= 1 ? ['🌱', '새싹 키우미', '믿어준 회사가 자라기 시작했어요. 조금만 더 믿어주면 세계로 갈 수 있어요!']
+    : ['🛡️', '안전제일 팀장', '마을은 지켰지만 새 기술은 자라지 못했어요. 누군가 처음 써줘야 기술이 자라요.'];
+  G.shareText = `첫 손님 🃏 혁신조달 평가 ${grade}등급 · ${type[0]} ${type[1]}${G.caught ? ' 🕵️' : ''}\n${ents.map(e => C[e.id].art + STAGES[e.stage].icon).join(' ')}\n정책: ${G.policies.map(p => POLICIES[p].i).join('')}\n처음은, 나라가 믿어줄게요. #첫손님 #조달청`;
+  const rep = [
+    `🧾 새 기술 <b>${G.firsts.size}종</b>의 첫 손님이 되어줬어요 → 진짜 조달청도 <b>혁신제품 시범구매</b>로 첫 구매자가 돼요`,
+    `🏭 공장 이상으로 자란 회사 <b>${big}곳</b> · 성장 <b>${G.grows}번</b> → 첫 구매가 실적이 되어 다른 기관도 사요`,
+    `✉️ 피드백·고쳐서 다시 <b>${G.feedbacks + G.fixes}번</b> → 조달청은 써본 결과를 기업에 돌려줘 제품을 키워요`,
+    G.caught ? `🕵️ 가짜 AI <b>${G.caught}번</b> 적발 → 조달청은 겉모습이 아니라 <b>기술</b>로 평가해요` : G.fooled ? `😵 가짜 AI에 <b>${G.fooled}번</b> 속았어요 → 써보기 전에 근거와 시연을 확인해요` : `🔍 가짜 AI는 만나지 않았어요`,
+    `📜 결재한 정책: ${G.policies.map(p => `${POLICIES[p].i} ${POLICIES[p].n}`).join(', ') || '없음'}`,
+    `🔁 다시 도전 ${G.retries}번 → 실패해도 탓하지 않아요 (구매 면책)`,
+  ];
+  document.body.classList.remove('inbattle'); app.innerHTML = `<div class="screen bg-title"><div class="ending">
+    <h2>올해의 첫 손님 리포트</h2>
+    <div style="opacity:.8">혁신조달 평가 등급</div><div class="grade">${grade}</div><br>
+    <div class="type">${type[0]} ${type[1]}${G.caught ? ' + 🕵️ 가짜 AI 사냥꾼' : ''}</div>
+    <p>${type[2]}</p>
+    <p style="font-family:var(--title);margin-top:12px">🏘️ 내가 키운 혁신 거리</p>
+    ${streetHTML(false)}
+    <div class="report">${rep.map(r => `<div>${r}</div>`).join('')}</div>
+    <div class="report">💡 진짜 조달청은 새 기술의 <b>첫 손님</b>이 되어요. 나라 돈으로 먼저 사서 필요한 공공기관이 써보게 해요. (2026년 혁신제품 시범구매 <b>839억 원</b>, AI 분야 전용트랙 신설)</div>
+    <div class="report" style="text-align:center;font-family:var(--title);font-size:20px">처음은, 나라가 믿어줄게요. — 조달청</div>
+    <div class="row-btns"><button class="big-btn" data-act="share">결과 복사 📋</button><button class="ghost-btn" data-act="toTitle">처음부터 🔁</button></div>
+  </div></div>`;
+  sfx('win'); burst($('.grade'), ['🎉', '✨', '⭐'], 20);
+}
+
+/* ---------- 입력 ---------- */
+document.addEventListener('click', async e => {
+  const el = e.target.closest('[data-act]');
+  const act = el && el.dataset.act;
+  if (act === 'sound') { G.sound = !G.sound; if (B && !B.over) renderBattle(); else if (!B) titleScreen(); return; }
+  if (act === 'start') { sfx('play'); startGame(); return; }
+  if (act === 'cutNext') { cutNext(); return; }
+  if (act === 'cutSkip') { e.stopPropagation(); cutSkip(); return; }
+  if (act === 'reqOk') { reqOk(); return; }
+  if (act === 'afterWin') { afterWin(); return; }
+  if (act === 'retry') { closeOverlay(); startBattle(); return; }
+  if (act === 'polPick') { polPick(el.dataset.id, el); return; }
+  if (act === 'dEye') { draftEye(el.dataset.id); return; }
+  if (act === 'dPick') { draftPick(el.dataset.id); return; }
+  if (act === 'dFeedback') { if (D && !D.done) feedbackScreen(); return; }
+  if (act === 'fbBack') { if (D && !D.done) drawDraft(); return; }
+  if (act === 'fbPick') { fbPick(+el.dataset.ref, el); return; }
+  if (act === 'toTitle') { titleScreen(); return; }
+  if (act === 'pol') { const P = POLICIES[el.dataset.id]; toast(`${P.i} ${P.n}: ${P.d}`, 2200); return; }
+  if (act === 'share') {
+    try { await navigator.clipboard.writeText(G.shareText); toast('결과를 복사했어요! 붙여넣어 자랑해요 📋'); } catch (err) { prompt('아래 글을 복사하세요', G.shareText); }
+    return;
+  }
+  if (!B || B.over || !B.started) return;
+  if (B.busy || B.turn !== 'player') { if (act && act !== 'end') toast('재난의 턴이에요. 잠깐만요!', 900); return; }
+  const uid = el && +el.dataset.uid;
+  const find = arr => arr.find(c => c.uid === uid);
+  switch (act) {
+    case 'hand': {
+      const c = find(B.hand); if (!c) return;
+      if (B.mode === 'eye') { useEye(c); return; }
+      if (B.mode === 'spell' || B.mode === 'attack') { B.mode = null; B.attacker = null; B.spellCard = null; }
+      if (B.sel === c.uid) { tryPlay(c); return; }
+      B.sel = c.uid; sfx('card'); renderBattle(); showInfo(c);
+      if (c.type === 'fake') tip('fakeinfo', `<b>달이</b>: 예산 1인데 5/5…? 이상하게 좋은데요. 🥽 안경으로 볼까요?`);
+      return;
+    }
+    case 'mine': {
+      const m = find(B.board); if (!m) return;
+      if (B.mode === 'spell') { if (m.type !== 'new') { toast('🌱 새 기술 카드에만 쓸 수 있어요'); return; } castSpell(B.spellCard, m); return; }
+      if (B.attacker === m.uid) { B.attacker = null; B.mode = null; renderBattle(); showInfo(null); return; }
+      showInfo(m);
+      if (m.frozenNow) { toast('❄️ 이번 턴엔 쉬어요'); return; }
+      if (m.justPlayed && !m.canAttack) { toast('💤 다음 턴부터 처리할 수 있어요'); return; }
+      if (!m.canAttack) { toast('이번 턴엔 이미 처리했어요'); return; }
+      if (atkOf(m) <= 0) { toast('대응력이 0이라 막기만 해요'); return; }
+      B.attacker = m.uid; B.mode = 'attack'; B.sel = null; sfx('card'); renderBattle(); return;
+    }
+    case 'foe': {
+      const f = find(B.eboard); if (!f) return;
+      if (B.mode === 'attack') { const att = B.board.find(m => m.uid === B.attacker); if (att) doAttack(att, f); return; }
+      showInfo(f); return;
+    }
+    case 'boss': {
+      if (B.mode === 'attack') { const att = B.board.find(m => m.uid === B.attacker); if (att) doAttack(att, 'boss'); return; }
+      toast(`${S().art} ${S().boss}: 힘이 0이 되면 이 계절을 지켜내요! 절반 아래면 화가 나요.`, 2000); return;
+    }
+    case 'eye': {
+      if (B.eyeUsed) { toast('🥽 안경은 턴마다 한 번이에요'); return; }
+      if (B.mana < (hasP('techeval') ? 0 : 1)) { toast('예산이 모자라요 💰'); return; }
+      if (B.mode === 'eye') { B.mode = null; renderBattle(); return; }
+      B.mode = 'eye'; B.sel = null; B.attacker = null; renderBattle(); showInfo(null);
+      toast('🥽 진짜 모습을 볼 손패 카드를 눌러요'); return;
+    }
+    case 'end': endTurn(); return;
+    default:
+      if (B.mode || B.sel) { B.mode = null; B.sel = null; B.attacker = null; B.spellCard = null; renderBattle(); showInfo(null); }
+  }
+});
+document.addEventListener('mouseover', e => {
+  if (!B || B.over || B.sel || B.mode === 'spell') return;
+  const el = e.target.closest('.battle [data-uid]'); if (!el) return;
+  const c = [...B.hand, ...B.board, ...B.eboard].find(x => x.uid === +el.dataset.uid); if (c) showInfo(c);
+});
+document.addEventListener('mouseout', e => {
+  const el = e.target.closest && e.target.closest('.card');
+  if (el && !el.contains(e.relatedTarget)) { el.style.setProperty('--rx', '0deg'); el.style.setProperty('--ry', '0deg'); }
+  if (!B || B.sel || B.mode === 'spell') return;
+  const bel = e.target.closest && e.target.closest('.battle [data-uid]'); if (bel && !bel.contains(e.relatedTarget)) showInfo(null);
+});
+document.addEventListener('mousemove', e => {
+  const el = e.target.closest('.hand .card, .pitch .card, .fbgrid .card'); if (!el) return;
+  const r = el.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+  el.style.setProperty('--ry', (x * 18) + 'deg'); el.style.setProperty('--rx', (-y * 18) + 'deg');
+});
+
+titleScreen();
+</script>
+</body>
+</html>

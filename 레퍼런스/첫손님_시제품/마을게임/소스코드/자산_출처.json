@@ -1,0 +1,16 @@
+{
+  "date": "2026-11-20",
+  "officialCharacters": "Unmodified official artwork supplied at 첫손님_assets/official/. Optimized WebP copies only. Dari displayed at half Narmi's height.",
+  "reusedIllustrations": {
+    "inventors": {
+      "file": "assets/inventors.webp",
+      "prompt": "Use case: stylized-concept. Asset type: six charming animal inventor character sprites in one 3 column by 2 row spritesheet, exactly evenly spaced in equal cells. Transparent background. Full body figures, all same height in their cell, all separated with generous empty margin. Cohesive polished 2D cozy indie videogame cartoon artwork, thick dark chocolate outlines, soft gouache texture, bold simple shapes, cream and pastel colors with teal and tomato red accents. Top row: LEFT a round cute raccoon scientist in teal work overalls with tiny round spectacles holding a small high-tech forest camera, CENTER an adorable hedgehog inventor with rust orange scarf holding a small teal quadcopter drone, RIGHT a gentle large brown bear engineer in khaki work jacket holding a wooden lookout tower model. Bottom row: LEFT a cheerful otter engineer in turquoise raincoat holding a water sensor, CENTER a smug fox businessperson in violet jacket holding a shiny magic mirror with a secret remote in other paw, RIGHT a cute elderly sheep inventor with peach cardigan and glasses holding a small smart speaker. Each character expressive, collectible-card-worthy, welcoming personality, beautiful professional game illustration. Front-facing 3/4 poses. NO text, no labels, no lettering, no numbers, no borders, no panels, no UI, no ground, no logos. All sprites isolated, nothing overlaps cells. Transparent background."
+    },
+    "hamster": {
+      "file": "assets/hamster.webp",
+      "prompt": "Use case: stylized-concept. Asset type: single isolated full body character sprite with transparent background. A very cute original hamster inventor, round golden tan cheeks with creamy white belly and tiny ears, wearing mint green work overalls, short red neckerchief, holding a small toy model of a smart pedestrian crossing with a green traffic signal in both paws. Friendly pleased expression. Thick dark chocolate outlines, gouache texture, professional cozy 2D indie videogame character art. Full body front three-quarter pose, entire character fits in square with generous margin, feet visible. No background, no scenery, NO text or lettering, no logos, no labels. Transparent alpha background."
+    }
+  },
+  "world": "Procedural articulated 3D character models based on supplied Narmi/Dari artwork and original inventor designs. Independent head, limbs, eyes, mouth, facial reactions and stage choreography. Original 2D artwork remains in portraits and collection cards. No new raster image generation.",
+  "library": "Three.js 0.160.1 / MIT"
+}
